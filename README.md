@@ -5,7 +5,7 @@
 Работает на платформе VK mini Apps, что позволяет использовать его из основного приложения социальной сети ВКонтакте без необходимости скачивать на устройство.
 
 ## Demo
-Демонстрационное приложение: https://vk.com/app7515285_53369046
+Демонстрационное приложение: https://vk.com/app7515285
 
 <p align="center">
   <img width="auto" height="380" src="https://i.imgur.com/DYG1MFM.png">
@@ -40,4 +40,4 @@
 - [ ] Объявления возле тебя
 - [ ] много..
 
-[@CreativeBoys](https://vk.com/app7515285_53369046 "@CreativeBoys")
+[@CreativeBoys](https://vk.com/app7515285 "@CreativeBoys")
