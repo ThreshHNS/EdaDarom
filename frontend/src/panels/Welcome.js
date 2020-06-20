@@ -1,36 +1,24 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-import { YMaps, Map, Placemark, GeolocationControl } from "react-yandex-maps";
+import { YMaps, Map, Placemark } from "react-yandex-maps";
 
 import {
   View,
   Panel,
   ModalRoot,
-  ModalPage,
   ModalCard,
   PanelHeader,
   Button,
   Group,
-  List,
-  Cell,
   Div,
   Gallery,
-  InfoRow,
-  Avatar,
   Header,
   Text,
   ModalPageHeader,
-  PanelHeaderButton,
   Spinner,
-  ANDROID,
-  IOS,
-  usePlatform,
 } from "@vkontakte/vkui";
 import bridge from "@vkontakte/vk-bridge";
-
-import Icon24Cancel from "@vkontakte/icons/dist/24/cancel";
-import Icon24Dismiss from "@vkontakte/icons/dist/24/dismiss";
 
 import pizza from "../img/pizza.png";
 import person from "../img/person.png";
@@ -209,6 +197,12 @@ const Welcome = ({
             onClick={() => setGeoModal("geo")}
           >
             Определить локацию
+          </Button>
+        );
+      default:
+        return (
+          <Button size="l" stretched>
+            Согласен!
           </Button>
         );
     }

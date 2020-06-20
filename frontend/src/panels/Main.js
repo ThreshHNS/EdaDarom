@@ -1,25 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import {
-  Epic,
-  Tabbar,
-  TabbarItem,
-  View,
-  Panel,
-  PanelHeader,
-  Group,
-  CellButton,
-  Text,
-  PanelHeaderButton,
-  platform,
-  IOS,
-} from "@vkontakte/vkui";
-import Icon28LocationOutline from "@vkontakte/icons/dist/28/location_outline";
-import Icon28ArticleOutline from "@vkontakte/icons/dist/28/article_outline";
-import Icon28FavoriteOutline from "@vkontakte/icons/dist/28/favorite_outline";
-import Icon28SettingsOutline from "@vkontakte/icons/dist/28/settings_outline";
+import { Epic, Tabbar, TabbarItem, View, Panel } from "@vkontakte/vkui";
+import Icon28HomeOutline from "@vkontakte/icons/dist/28/home_outline";
+import Icon28NewsfeedOutline from "@vkontakte/icons/dist/28/newsfeed_outline";
 import Icon28AddCircleOutline from "@vkontakte/icons/dist/28/add_circle_outline";
-import { Feed, Article, Favorite, Settings } from "./main";
+import Icon28PollSquareOutline from "@vkontakte/icons/dist/28/poll_square_outline";
+import Icon28SettingsOutline from "@vkontakte/icons/dist/28/settings_outline";
+import { Home, Feed, Add, Rating, Settings } from "./main";
 
 const Main = ({ id, activePanel, popout, go }) => {
   const [activeStory, setActiveStory] = useState("feed");
@@ -35,25 +22,32 @@ const Main = ({ id, activePanel, popout, go }) => {
             <Tabbar>
               <TabbarItem
                 onClick={onStoryChange}
-                selected={activeStory === "new"}
-                data-story="new"
+                selected={activeStory === "home"}
+                data-story="home"
               >
-                <Icon28AddCircleOutline />
+                <Icon28HomeOutline />
               </TabbarItem>
               <TabbarItem
                 onClick={onStoryChange}
                 selected={activeStory === "feed"}
                 data-story="feed"
               >
-                <Icon28ArticleOutline />
+                <Icon28NewsfeedOutline />
               </TabbarItem>
               <TabbarItem
                 onClick={onStoryChange}
-                selected={activeStory === "favorite"}
-                data-story="favorite"
+                selected={activeStory === "add"}
+                data-story="add"
+              >
+                <Icon28AddCircleOutline />
+              </TabbarItem>
+              <TabbarItem
+                onClick={onStoryChange}
+                selected={activeStory === "rating"}
+                data-story="rating"
                 label="12"
               >
-                <Icon28FavoriteOutline />
+                <Icon28PollSquareOutline />
               </TabbarItem>
               <TabbarItem
                 onClick={onStoryChange}
@@ -65,9 +59,10 @@ const Main = ({ id, activePanel, popout, go }) => {
             </Tabbar>
           }
         >
-          <Article id="article" activePanel="article" />
+          <Home id="home" activePanel="home" />
           <Feed id="feed" activePanel="feed" />
-          <Favorite id="favorite" activePanel="favorite" />
+          <Add id="add" activePanel="add" />
+          <Rating id="rating" activePanel="rating" />
           <Settings id="settings" activePanel="settings" />
         </Epic>
       </Panel>

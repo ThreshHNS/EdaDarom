@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import bridge from "@vkontakte/vk-bridge";
-import Root from "@vkontakte/vkui/dist/components/Root/Root";
-import View from "@vkontakte/vkui/dist/components/View/View";
-import ScreenSpinner from "@vkontakte/vkui/dist/components/ScreenSpinner/ScreenSpinner";
+import { Root, ScreenSpinner } from "@vkontakte/vkui";
 import "@vkontakte/vkui/dist/vkui.css";
 
 import { Welcome, Main } from "./panels";
@@ -11,7 +9,6 @@ import "./assets/style.css";
 
 const App = () => {
   const [activePanel, setActivePanel] = useState("main");
-  const [fetchedUser, setUser] = useState(null);
   const [popout, setPopout] = useState(<ScreenSpinner size="large" />);
 
   useEffect(() => {
@@ -41,7 +38,6 @@ const App = () => {
         activePanel={activePanel}
         setActivePanel={setActivePanel}
         popout={popout}
-        fetchedUser={fetchedUser}
         go={go}
       />
       <Main id="main" activePanel={activePanel} popout={popout} go={go} />

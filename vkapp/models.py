@@ -17,7 +17,7 @@ class VKUser(models.Model):
 	notifications_radius = models.IntegerField(default=1)  # km (1-10)
 	notifications_status = models.BooleanField()
 
-	medal = models.IntegerField(default=0)  # 0 - no, 1 - bronze, 2 - silver, 3 - gold
+	medal = models.IntegerField(default=0, blank=True, null=True )  # 0 - no, 1 - bronze, 2 - silver, 3 - gold
 
 	def __str__(self):
 		return f"{self.vk_id} ({self.first_name})"

@@ -1,4 +1,6 @@
+export { default as Home } from "./Home";
 export { default as Feed } from "./Feed";
-export { default as Article } from "./Article";
-export { default as Favorite } from "./Favorite";
+export { default as Add } from "./Add";
+export { default as Rating } from "./Rating";
 export { default as Settings } from "./Settings";
+export { default as Location } from "./Location";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {
   Button,
@@ -18,7 +18,7 @@ import {
 import Icon32Place from "@vkontakte/icons/dist/32/place";
 import product1fSize from "../../img/product1_fullsize.png";
 
-const Feed = ({ id, productId, activePanel }) => {
+const Detail = ({ id, productId, isOwn, onBackClick }) => {
   return (
     <Panel id={id}>
       <PanelHeader left={<PanelHeaderBack onClick={() => onBackClick()} />}>
@@ -74,17 +74,36 @@ const Feed = ({ id, productId, activePanel }) => {
         </SimpleCell>
       </Group>
       <Group>
-        <Div>
-          <Button size="xl">Забрать</Button>
-        </Div>
+        {!isOwn ? (
+          <Div>
+            <Button size="xl">Забрать</Button>
+          </Div>
+        ) : (
+          <>
+            <Div>
+              <Button size="xl">Забрали</Button>
+            </Div>
+            <Div>
+              <Button size="xl" mode="secondary">
+                Редактировать
+              </Button>
+            </Div>
+            <Div>
+              <Button size="xl" mode="secondary" className="Button__Remove">
+                Удалить
+              </Button>
+            </Div>
+          </>
+        )}
       </Group>
     </Panel>
   );
 };
 
-Feed.propTypes = {
+Detail.propTypes = {
   id: PropTypes.string.isRequired,
   activePanel: PropTypes.string.isRequired,
+  isOwn: PropTypes.bool,
 };
 
-export default Feed;
+export default Detail;
