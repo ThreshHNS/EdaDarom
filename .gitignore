@@ -16,3 +16,9 @@ package-lock.json
 
 .vscode
 .idea
+
+# MacOS
+**/.DStore
+
+# Virtual env
+venv
