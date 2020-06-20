@@ -17,7 +17,7 @@ def path_and_rename(instance, filename):
     time = datetime.now().strftime('%d-%m-%y %H:%M:%S')
     ext = filename.split('.')[-1]
     if instance.pk:
-        filename = f'user_{instance.user.pk}_{insance.pk}_{time}.{ext}'
+        filename = f'user_{instance.user.pk}_{instance.pk}_{time}.{ext}'
     else:
         filename = f'{uuid4().hex}.{ext}'
     return os.path.join(upload_to, filename)

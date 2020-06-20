@@ -10,8 +10,8 @@ class VKUser(models.Model):
 
 	vk_id = models.IntegerField()
 
-	first_name = models.TextField()
-	avatar_url = models.TextField(null=True, blank=True)
+	first_name = models.CharField(max_length=16)
+	avatar_url = models.URLField(null=True, blank=True)
 	location_coordinates = models.PointField(null=False, blank=False, srid=4326, verbose_name='Location')
 	location_title = models.TextField()
 	notifications_radius = models.IntegerField(default=1)  # km (1-10)
@@ -44,4 +44,4 @@ class Food(models.Model):
 	status = models.SmallIntegerField(choices=STATUS_CHOICES, default=DONE)
 
 	def __str__(self):
-		return f"{self.user.vk_id} - {self.title}"
+		return f"{self.user} - {self.title}"

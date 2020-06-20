@@ -76,6 +76,9 @@ const Welcome = ({
         .catch((error) => {
           // Обработка события в случае ошибки
         });
+      bridge.send("VKWebAppGetUserInfo", {}).then((data) => {
+        console.log(data);
+      });
       localStorage.setItem("alreadyLaunched", true);
     }
   }, [galleryPage]);

@@ -1,3 +1,10 @@
 from django.contrib import admin
+from .models import VKUser, Food
 
-# Register your models here.
+@admin.register(VKUser)
+class VKUserAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Food)
+class VKUserAdmin(admin.ModelAdmin):
+    pass
