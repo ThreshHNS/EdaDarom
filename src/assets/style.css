@@ -1,0 +1,90 @@
+.Welcome__Icon {
+  height: 197px;
+  margin: 40px auto;
+}
+
+.Welcome__Icon img {
+  display: block;
+  max-width: 197px;
+  height: auto
+}
+
+.header_title_text {
+  justify-content: "center";
+}
+
+.mapview {
+  position: absolute !important;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+.Welcome__Button {
+  margin: 0px 20px;
+  padding: 4px 0px;
+}
+
+.Card__Product {
+  margin: 18px 0;
+  box-shadow: 0 2px 24px 0 rgba(0, 0, 0, .08), 0 0 2px 0 rgba(0, 0, 0, .08);
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.Card__Product_image {
+  height: 154px;
+  flex: 0.5;
+}
+
+.Card__Product_image img {
+  width: auto;
+  height: 100%;
+}
+
+.Card__Product_info {
+  flex: 1.5;
+  padding: 24px 14px
+}
+
+.Card__Product_info_text {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.Card__Icon {
+  color: var(--dynamic_blue);
+}
+
+.Text__Secondary {
+  color: var(--text_secondary)
+}
+
+
+/* .Gallery__CustomBullets {
+  position: absolute;
+  bottom: 10px;
+  height: 6px;
+  width: 100%;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  }
+
+.Gallery__CustomBullet {
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  margin: 0 3px;
+  opacity: .56;
+  color: "white";
+
+}
+
+.Gallery__CustomBullet--active {
+  opacity: 1;
+} */
