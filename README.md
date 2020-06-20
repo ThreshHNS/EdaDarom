@@ -21,6 +21,7 @@
 - [VKUI](https://vkcom.github.io/vkui-styleguide/) - это набор React-компонентов, с помощью которых можно создавать интерфейсы
 
 ## Installation
+<i>По вопросам: [@andreyvelts](https://t.me/andreyvelts "@andreyvelts")</i>
 - Open a command line window and go to the project's directory.
 - `pip install -r requirements.txt`
 - `python manage.py makemigrations`
