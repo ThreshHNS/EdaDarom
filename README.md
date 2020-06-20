@@ -1,34 +1,42 @@
-[<img width="134" src="https://vk.com/images/apps/mini_apps/vk_mini_apps_logo.svg">](https://vk.com/services)
+![EdaDaromBanner](https://i.imgur.com/2HFqYJk.png)
 
-# Create VK Mini App [![npm][npm]][npm-url] [![deps][deps]][deps-url]
+## Introduction
+**Еда даром** - это приложение, позволяющее людям делиться друг с другом излишками еды. Работает на платформе VK mini Apps, что позволяет использовать его из основного приложения социальной сети ВКонтакте без необходимости скачивать на устройство.
 
-## How to install
+## Demo
+Демонстрационное приложение: https://vk.com/app7515285_53369046
 
-### Create VK Mini App with gh-pages deploy
+<p align="center">
+  <img width="auto" height="380" src="https://i.imgur.com/DYG1MFM.png">
+</p>
 
-`npx @vkontakte/create-vk-mini-app <app-directory-name>`
 
-### Create VK Mini App with Zeit deploy
+## Built with
 
-Firstly, you have to create Zeit account and connect it with your GitHub profile — https://zeit.co/
+- [Django](https://www.djangoproject.com/) - свободный фреймворк для веб-приложений на языке Python
+- [DRF](https://www.django-rest-framework.org/) -  библиотека, которая работает со стандартными моделями Django для создания гибкого и мощного API 
+- [React](https://github.com/facebook/react) - JavaScript-библиотека для создания пользовательских интерфейсов
+- [Redux](https://redux.js.org/) - менеджер состояний, часто используемым с React.
+- [VKUI](https://vkcom.github.io/vkui-styleguide/) - это набор React-компонентов, с помощью которых можно создавать интерфейсы
 
-`npx @vkontakte/create-vk-mini-app <app-directory-name> --zeit`
+## Installation
+- Open a command line window and go to the project's directory.
+- `pip install -r requirements.txt`
+- `python manage.py makemigrations`
+- `python manage.py migrate`
+- `python manage.py runserver`
+- Open another command line window.
+- `cd frontend && npm install`
+- `npm install`
+- Open and another command line window.
+- `vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=10888`
+- Optional: `ngrok http 8000` or use vk-tunnel instead, change your ip address in `utils/axios.js`
 
-### Create VK Mini App with Surge deploy
 
-Firstly, you have to create Surge account and Surge-domain — https://surge.sh/
+## Todo
+- [X] Авторизация
+- [ ] Создание нового объявления
+- [ ] Объявления возле тебя
+- [ ] много..
 
-`npx @vkontakte/create-vk-mini-app <app-directory-name> --surge <surge-domain>`
-
-## How to start work with app
-
-Go to created folder and run:
-`yarn start` || `npm start` — this will start dev server with hot reload on `localhost:10888`.
-
-`yarn run build` || `npm run build` — this will build production bundle, with tree-shaking, uglify and all this modern fancy stuff
-
-[npm]: https://img.shields.io/npm/v/@vkontakte/create-vk-mini-app.svg
-[npm-url]: https://npmjs.com/package/@vkontakte/create-vk-mini-app
-
-[deps]: https://img.shields.io/david/vkcom/create-vk-mini-app.svg
-[deps-url]: https://david-dm.org/vkcom/create-vk-mini-app
+[@CreativeBoys](https://vk.com/app7515285_53369046 "@CreativeBoys")

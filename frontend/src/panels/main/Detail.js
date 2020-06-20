@@ -69,7 +69,7 @@ const Detail = ({ id, productId, isOwn, onBackClick }) => {
       <Group>
         <SimpleCell multiline>
           <InfoRow header="Описание">
-            Любимый супчик моей бабушки. Отдаю нуждающимся.
+            Фасоль в банках, остался месяц до истечения срока годности.
           </InfoRow>
         </SimpleCell>
       </Group>

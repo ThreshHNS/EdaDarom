@@ -48,9 +48,7 @@ const Home = ({ id, activePanel }) => {
                   >
                     Батон нарезной
                   </Title>
-                  <div className="Card__Product_info_text">
-                    <Icon24Place className="Card__Icon" />
-                  </div>
+
                   <div className="Card__Product_info_text">
                     <svg
                       width="14"
@@ -85,9 +83,6 @@ const Home = ({ id, activePanel }) => {
                   >
                     Комплексный обед
                   </Title>
-                  <div className="Card__Product_info_text">
-                    <Icon24Place className="Card__Icon" />
-                  </div>
                   <div className="Card__Product_info_text">
                     <svg
                       width="14"
