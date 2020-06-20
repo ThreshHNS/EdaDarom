@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-
+import { connect } from "react-redux";
 import { YMaps, Map, Placemark } from "react-yandex-maps";
 
 import {
@@ -19,19 +19,13 @@ import {
   Spinner,
 } from "@vkontakte/vkui";
 import bridge from "@vkontakte/vk-bridge";
+import * as actions from "../store/actions/user";
 
 import pizza from "../img/pizza.png";
 import person from "../img/person.png";
 import home from "../img/home.png";
 
-const Welcome = ({
-  id,
-  activePanel,
-  setActivePanel,
-  popout,
-  go,
-  fetchedUser,
-}) => {
+const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
   const [galleryPage, setGalleryPage] = useState(0);
   const [geoLocation, setGeoLocation] = useState({
     lat: null,
@@ -42,9 +36,37 @@ const Welcome = ({
   });
   const [geoModal, setGeoModal] = useState(null);
   const [mapVisible, setMapVisible] = useState(false);
+  const [vkUser, setVkUser] = useState();
+
+  useEffect(() => {
+    if (vkUser && geoLocation && geoLocation.coordinates) {
+      const geo = {
+        type: "Point",
+        coordinates: geoLocation.currentGeo.center,
+      };
+      const user = {
+        vk_id: vkUser.id,
+        first_name: vkUser.first_name,
+        last_name: vkUser.last_name,
+        avatar_url: vkUser.photo_max_orig,
+        location_coordinates: geo,
+      };
+      userPost(user);
+      localStorage.setItem("alreadyLaunched", true);
+    }
+  }, [vkUser, geoLocation]);
 
   useEffect(() => {
     if (galleryPage === 2) {
+      bridge
+        .send("VKWebAppGetUserInfo")
+        .then((data) => {
+          setVkUser(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       bridge
         .send("VKWebAppGetGeodata")
         .then((data) => {
@@ -59,15 +81,10 @@ const Welcome = ({
             },
             coordinates: [[data.lat, data.long]],
           });
-          console.log(data);
         })
         .catch((error) => {
           // Обработка события в случае ошибки
         });
-      bridge.send("VKWebAppGetUserInfo", {}).then((data) => {
-        console.log(data);
-      });
-      localStorage.setItem("alreadyLaunched", true);
     }
   }, [galleryPage]);
 
@@ -109,10 +126,10 @@ const Welcome = ({
         <Button
           size="l"
           stretched
-          mode="secondary"
           onClick={() => setActivePanel("main")}
+          style={{ padding: "4px 0px" }}
         >
-          Ясно
+          Сохранить
         </Button>
       </ModalCard>
     </ModalRoot>
@@ -210,7 +227,7 @@ const Welcome = ({
   return (
     <View activePanel={activePanel} popout={popout} modal={modal}>
       <Panel id={id}>
-        <PanelHeader>Еда рядом</PanelHeader>
+        <PanelHeader>Еда даром</PanelHeader>
 
         <Group header={<Header mode="secondary"></Header>}>
           <Gallery
@@ -238,4 +255,10 @@ Welcome.propTypes = {
   go: PropTypes.func.isRequired,
 };
 
-export default Welcome;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    userPost: (user) => dispatch(actions.userPost(user)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Welcome);

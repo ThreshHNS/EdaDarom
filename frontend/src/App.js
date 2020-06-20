@@ -19,9 +19,10 @@ const App = () => {
         document.body.attributes.setNamedItem(schemeAttribute);
       }
     });
+
     let alreadyLaucned = localStorage.getItem("alreadyLaunched");
+
     if (!alreadyLaucned) {
-      localStorage.setItem("alreadyLaunched", true);
       setActivePanel("welcome");
     }
     setPopout(null);
@@ -40,6 +41,7 @@ const App = () => {
         popout={popout}
         go={go}
       />
+
       <Main id="main" activePanel={activePanel} popout={popout} go={go} />
     </Root>
   );

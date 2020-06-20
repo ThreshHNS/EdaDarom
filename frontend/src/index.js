@@ -10,11 +10,13 @@ import thunk from "redux-thunk";
 import App from "./App";
 
 import userReducer from "./store/reducers/user";
+import foodReducer from "./store/reducers/food";
 
 const composeEnhances = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducer = combineReducers({
   user: userReducer,
+  food: foodReducer,
 });
 
 const store = createStore(rootReducer, composeEnhances(applyMiddleware(thunk)));
@@ -29,6 +31,6 @@ const app = (
 bridge.send("VKWebAppInit");
 
 ReactDOM.render(app, document.getElementById("root"));
-if (process.env.NODE_ENV === "development") {
-  import("./eruda").then(({ default: eruda }) => {}); //runtime download
-}
+// if (process.env.NODE_ENV === "development") {
+//   import("./eruda").then(({ default: eruda }) => {}); //runtime download
+// }

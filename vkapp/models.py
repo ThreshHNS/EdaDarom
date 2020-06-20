@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.gis.db import models
+from django.contrib.gis.db.models import PointField
 from .utils import path_and_rename
 
 
@@ -11,11 +11,12 @@ class VKUser(models.Model):
 	vk_id = models.IntegerField()
 
 	first_name = models.CharField(max_length=16)
-	avatar_url = models.URLField(null=True, blank=True)
-	location_coordinates = models.PointField(null=False, blank=False, srid=4326, verbose_name='Location')
-	location_title = models.TextField()
+	last_name = models.CharField(max_length=16)
+	avatar_url = models.TextField(null=True, blank=True)
+	location_coordinates = PointField(null=False, blank=False, verbose_name='Location')
+	location_title = models.TextField(blank=False, null=False)
 	notifications_radius = models.IntegerField(default=1)  # km (1-10)
-	notifications_status = models.BooleanField()
+	notifications_status = models.BooleanField(default=True)
 
 	medal = models.IntegerField(default=0, blank=True, null=True )  # 0 - no, 1 - bronze, 2 - silver, 3 - gold
 

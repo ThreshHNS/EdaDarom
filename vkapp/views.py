@@ -12,3 +12,9 @@ class VKUserViewSet(viewsets.ModelViewSet):
     """
     queryset = VKUser.objects.all()
     serializer_class = VKUserSerializer
+
+    def retrieve(self, request, pk=None):
+        vk_id = self.request.query_params.get('vk_id')
+        queryset = VKUser.objects.filter(vk_id=vk_id).first()
+        serializer = VKUserSerializer(queryset)
+        return Response(serializer.data)

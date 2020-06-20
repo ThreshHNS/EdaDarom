@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Epic, Tabbar, TabbarItem, View, Panel } from "@vkontakte/vkui";
 import Icon28HomeOutline from "@vkontakte/icons/dist/28/home_outline";
@@ -7,12 +8,36 @@ import Icon28AddCircleOutline from "@vkontakte/icons/dist/28/add_circle_outline"
 import Icon28PollSquareOutline from "@vkontakte/icons/dist/28/poll_square_outline";
 import Icon28SettingsOutline from "@vkontakte/icons/dist/28/settings_outline";
 import { Home, Feed, Add, Rating, Settings } from "./main";
+import bridge from "@vkontakte/vk-bridge";
+import * as actions from "../store/actions/user";
 
-const Main = ({ id, activePanel, popout, go }) => {
+const Main = ({ id, activePanel, isAuth, userGet, popout, go }) => {
   const [activeStory, setActiveStory] = useState("feed");
+  const [vkUser, setVkUser] = useState(null);
   const onStoryChange = (e) => {
     setActiveStory(e.currentTarget.dataset.story);
   };
+
+  useEffect(() => {
+    console.log("start");
+    bridge
+      .send("VKWebAppGetUserInfo")
+      .then((data) => {
+        console.log("data", data);
+        setVkUser(data.id);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (vkUser && !isAuth) {
+      console.log("vkuser", vkUser);
+      userGet(vkUser);
+    }
+  }, [isAuth, vkUser]);
+
   return (
     <View activePanel={activePanel}>
       <Panel id={id}>
@@ -45,7 +70,6 @@ const Main = ({ id, activePanel, popout, go }) => {
                 onClick={onStoryChange}
                 selected={activeStory === "rating"}
                 data-story="rating"
-                label="12"
               >
                 <Icon28PollSquareOutline />
               </TabbarItem>
@@ -75,4 +99,14 @@ Main.propTypes = {
   go: PropTypes.func.isRequired,
 };
 
-export default Main;
+const mapStateToProps = (state) => ({
+  isAuth: !!state.user.vkId,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    userGet: (id) => dispatch(actions.userGet(id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

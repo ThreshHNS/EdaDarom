@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
   View,
@@ -18,9 +19,18 @@ import Icon32Place from "@vkontakte/icons/dist/32/place";
 
 import Location from "./Location";
 
-const Settings = ({ id, activePanel }) => {
+const Settings = ({
+  id,
+  activePanel,
+  firstName,
+  lastName,
+  avatar,
+  city,
+  radius,
+  notificationStatus,
+}) => {
   const [settingsPanel, setSettingsPanel] = useState(activePanel);
-  const [isNotifications, setIsNotifications] = useState(true);
+  const [isNotifications, setIsNotifications] = useState(notificationStatus);
 
   const onBackClick = () => {
     setSettingsPanel(id);
@@ -29,20 +39,13 @@ const Settings = ({ id, activePanel }) => {
   return (
     <View id={id} activePanel={settingsPanel}>
       <Panel id={id}>
-        <PanelHeader>Локация</PanelHeader>
+        <PanelHeader>Настройки</PanelHeader>
         <RichCell
           disabled
-          before={
-            <Avatar
-              size={72}
-              src={
-                "https://sun9-58.userapi.com/c841434/v841434178/39c39/1epfQKlYgkI.jpg"
-              }
-            />
-          }
+          before={<Avatar size={72} src={avatar} />}
           caption="Санкт-Петербург"
         >
-          Андрей Вельц
+          {firstName} {lastName}
         </RichCell>
         <Group>
           <Cell
@@ -63,9 +66,13 @@ const Settings = ({ id, activePanel }) => {
               disabled={!isNotifications}
               top="Радиус поиска"
               placeholder="Укажите радиус поиска еды"
+              value={radius}
             >
-              <option value="m">Мужской</option>
-              <option value="f">Женский</option>
+              <option value="1">1 км</option>
+              <option value="2">2 км</option>
+              <option value="3">3 км</option>
+              <option value="4">4 км</option>
+              <option value="5">5 км</option>
             </Select>
           </FormLayout>
         </Group>
@@ -91,4 +98,13 @@ Settings.propTypes = {
   activePanel: PropTypes.string.isRequired,
 };
 
-export default Settings;
+const mapStateToProps = (state) => ({
+  firstName: state.user.firstName,
+  lastName: state.user.lastName,
+  city: state.user.city,
+  avatar: state.user.avatar,
+  radius: state.user.radius,
+  notificationStatus: state.user.notificationStatus,
+});
+
+export default connect(mapStateToProps)(Settings);

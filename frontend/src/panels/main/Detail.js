@@ -38,7 +38,7 @@ const Detail = ({ id, productId, isOwn, onBackClick }) => {
       </CardGrid>
       <Group>
         <Title level="2" weight="semibold" style={{ marginLeft: 16 }}>
-          Бабушкин супчик
+          Фасоль в банке
         </Title>
 
         <Cell
