@@ -1,4 +1,4 @@
-![EdaDaromBanner](https://i.imgur.com/2HFqYJk.png)
+![EdaDaromBanner](https://i.imgur.com/btuVjar.png)
 
 ## Introduction
 **Еда даром** - это приложение, позволяющее людям делиться друг с другом излишками еды.  
