@@ -41,7 +41,7 @@
 - `npm start`
 - Open and another command line window.
 - `vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=10888`
-- Optional: `ngrok http 8000` or use vk-tunnel instead, change your ip address in `utils/axios.js`
+- Optional: `ngrok http 8000` or use vk-tunnel instead, change your ip address in `frontend/utils/axios.js`
 
 
 ## Todo
