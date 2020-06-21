@@ -22,11 +22,13 @@
 
 ## Installation
 <i>По вопросам: [@andreyvelts](https://t.me/andreyvelts "@andreyvelts")</i>
+- Install postgres and configure in
+- `backend/settings.py`
 - Open a command line window and go to the project's directory.
 - `pip install -r requirements.txt`
 - `python manage.py makemigrations`
 - `python manage.py migrate`
-- `python manage.py runserver`
+- `python manage.py runserver` or `python manage.py runserver 0.0.0.0:<your_port>`
 - Open another command line window.
 - `cd frontend && npm install`
 - `npm start`
