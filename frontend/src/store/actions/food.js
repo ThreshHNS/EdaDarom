@@ -1,4 +1,4 @@
-import { axios } from "../utils";
+import { axios } from "../../utils";
 import * as actionTypes from "./actionTypes";
 
 export const foodNearestSuccess = (food) => {
@@ -40,5 +40,18 @@ export const foodPostFail = (error) => {
   return {
     type: actionTypes.FOOD_POST_FAIL,
     error: error,
+  };
+};
+
+export const foodNearest = (id) => {
+  return (dispatch) => {
+    axios
+      .get("/food/nearest/", { params: { vk_id: id } })
+      .then((res) => {
+        dispatch(foodNearestSuccess(res.data));
+      })
+      .catch((err) => {
+        dispatch(foodNearestFail(err.message));
+      });
   };
 };

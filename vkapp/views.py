@@ -37,9 +37,10 @@ class FoodViewSet(viewsets.ModelViewSet):
     def nearest(self, request):
         vk_id = self.request.query_params.get("vk_id")
         user = VKUser.objects.filter(vk_id=vk_id).first()
-        if user is not None :
-            radius = user.notifications_radius * 1000
+        if user is not None:
+            radius = user.notifications_radius * 10000000
             ref_location = user.location_coordinates
+            # TODO: Exclude own food
             queryset = (
                 Food.objects.annotate(
                     distance=Distance("user__location_coordinates", ref_location)
