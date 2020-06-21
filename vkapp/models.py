@@ -4,45 +4,52 @@ from .utils import path_and_rename
 
 
 class VKUser(models.Model):
-	"""
+    """
 	VK User
 	"""
 
-	vk_id = models.IntegerField()
+    vk_id = models.IntegerField()
 
-	first_name = models.CharField(max_length=16)
-	last_name = models.CharField(max_length=16)
-	avatar_url = models.TextField(null=True, blank=True)
-	location_coordinates = PointField(null=False, blank=False, verbose_name='Location')
-	location_title = models.TextField(blank=False, null=False)
-	notifications_radius = models.IntegerField(default=1)  # km (1-10)
-	notifications_status = models.BooleanField(default=True)
+    first_name = models.CharField(max_length=16)
+    last_name = models.CharField(max_length=16)
+    avatar_url = models.TextField(null=True, blank=True)
+    location_coordinates = PointField(null=False, blank=False, verbose_name="Location")
+    location_title = models.TextField(blank=False, null=False)
+    notifications_radius = models.IntegerField(default=1)  # km (1-10)
+    notifications_status = models.BooleanField(default=True)
 
-	medal = models.IntegerField(default=0, blank=True, null=True )  # 0 - no, 1 - bronze, 2 - silver, 3 - gold
+    medal = models.IntegerField(
+        default=0, blank=True, null=True
+    )  # 0 - no, 1 - bronze, 2 - silver, 3 - gold
 
-	def __str__(self):
-		return f"{self.vk_id} ({self.first_name})"
+    def __str__(self):
+        return f"{self.vk_id} ({self.first_name})"
 
 
 class Food(models.Model):
-	"""
+    """
 	Advertisement about free food
 	"""
-	DONE = 0
-	ACTIVE = 1
-	OUTDATED = 2
-	CANCELED = -1
-	STATUS_CHOICES = ((DONE, 'Done'), (ACTIVE, 'Active'),
-						(OUTDATED, 'Outdated'), (CANCELED, 'Canceled'),)
 
-	user = models.ForeignKey('VKUser', on_delete=models.CASCADE)
+    DONE = 0
+    ACTIVE = 1
+    OUTDATED = 2
+    CANCELED = -1
+    STATUS_CHOICES = (
+        (DONE, "Done"),
+        (ACTIVE, "Active"),
+        (OUTDATED, "Outdated"),
+        (CANCELED, "Canceled"),
+    )
 
-	publication_date = models.DateField(auto_now_add=True)
-	duration = models.IntegerField(default=5)  # days (1-30)
-	photo_url = models.ImageField('Изображение', upload_to=path_and_rename, blank=True)
-	title = models.TextField()
-	description = models.TextField()
-	status = models.SmallIntegerField(choices=STATUS_CHOICES, default=DONE)
+    user = models.ForeignKey("VKUser", on_delete=models.CASCADE)
 
-	def __str__(self):
-		return f"{self.user} - {self.title}"
+    publication_date = models.DateField(auto_now_add=True)
+    duration = models.IntegerField(default=5)  # days (1-30)
+    photo_url = models.ImageField("Изображение", upload_to=path_and_rename, blank=True)
+    title = models.TextField()
+    description = models.TextField()
+    status = models.SmallIntegerField(choices=STATUS_CHOICES, default=DONE)
+    def __str__(self):
+        return f"{self.user} - {self.title}"
+

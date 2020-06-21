@@ -38,7 +38,7 @@ const Home = ({ id, activePanel }) => {
             <Tappable>
               <div className="Card__Product" onClick={() => getDetails(123)}>
                 <div className="Card__Product_image">
-                  <img src={product4} alt="Product Preview" />
+                  <img src={product5} alt="Product Preview" />
                 </div>
                 <div className="Card__Product_info">
                   <Title
@@ -73,7 +73,7 @@ const Home = ({ id, activePanel }) => {
             <Tappable>
               <div className="Card__Product" onClick={() => getDetails(123)}>
                 <div className="Card__Product_image">
-                  <img src={product5} alt="Product Preview" />
+                  <img src={product6} alt="Product Preview" />
                 </div>
                 <div className="Card__Product_info">
                   <Title

@@ -8,7 +8,7 @@ import { Welcome, Main } from "./panels";
 import "./assets/style.css";
 
 const App = () => {
-  const [activePanel, setActivePanel] = useState("main");
+  const [activePanel, setActivePanel] = useState("welcome");
   const [popout, setPopout] = useState(<ScreenSpinner size="large" />);
 
   useEffect(() => {
@@ -22,8 +22,8 @@ const App = () => {
 
     let alreadyLaucned = localStorage.getItem("alreadyLaunched");
 
-    if (!alreadyLaucned) {
-      setActivePanel("welcome");
+    if (alreadyLaucned) {
+      setActivePanel("main");
     }
     setPopout(null);
   }, []);
