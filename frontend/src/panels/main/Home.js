@@ -10,8 +10,6 @@ import {
   Group,
   Tappable,
 } from "@vkontakte/vkui";
-import Icon24Place from "@vkontakte/icons/dist/24/place";
-import product4 from "../../img/product4.png";
 import product5 from "../../img/product5.png";
 import product6 from "../../img/product6.png";
 import Detail from "./Detail";
@@ -20,7 +18,6 @@ const Home = ({ id, activePanel }) => {
   const [feedPanel, setFeedPanel] = useState(activePanel);
 
   const getDetails = (id) => {
-    console.log(id);
     setFeedPanel("detail");
   };
 

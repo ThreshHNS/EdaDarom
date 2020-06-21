@@ -19,11 +19,9 @@ const Main = ({ id, activePanel, isAuth, userGet, popout, go }) => {
   };
 
   useEffect(() => {
-    console.log("start");
     bridge
       .send("VKWebAppGetUserInfo")
       .then((data) => {
-        console.log("data", data);
         setVkUser(data.id);
       })
       .catch((error) => {
@@ -33,10 +31,9 @@ const Main = ({ id, activePanel, isAuth, userGet, popout, go }) => {
 
   useEffect(() => {
     if (vkUser && !isAuth) {
-      console.log("vkuser", vkUser);
       userGet(vkUser);
     }
-  }, [isAuth, vkUser]);
+  }, [isAuth, vkUser, userGet]);
 
   return (
     <View activePanel={activePanel}>

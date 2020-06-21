@@ -2,7 +2,6 @@ import { axios } from "../../utils";
 import * as actionTypes from "./actionTypes";
 
 export const userPostSuccess = (user) => {
-  console.log(user);
   return {
     type: actionTypes.USER_POST_SUCCESS,
     user,
@@ -10,7 +9,6 @@ export const userPostSuccess = (user) => {
 };
 
 export const userPostFail = (error) => {
-  console.log(error);
   return {
     type: actionTypes.USER_POST_FAIL,
     error: error,
@@ -39,7 +37,6 @@ export const userPost = (user) => {
         dispatch(userPostSuccess(res.data));
       })
       .catch((err) => {
-        console.log(err.response.data);
         dispatch(userPostFail(err.message));
       });
   };

@@ -35,7 +35,6 @@ const Location = ({ id, onBackClick }) => {
           },
           coordinates: [[data.lat, data.long]],
         });
-        console.log(data);
       })
       .catch((error) => {
         // Обработка события в случае ошибки
