@@ -22,11 +22,20 @@
 
 ## Installation
 <i>По вопросам: [@andreyvelts](https://t.me/andreyvelts "@andreyvelts")</i>
+- Install Geospatial libraries
+- `sudo apt-get install binutils libproj-dev gdal-bin`
+- Install postgres and configure
+- `$ createdb  <db name>`
+- `$ psql <db name>`
+- `> CREATE EXTENSION postgis;`
+- More about GeoDjango - [Installation](https://docs.djangoproject.com/en/3.0/ref/contrib/gis/install/#installation)
+- Change default database to created postgresql in
+- `backend/settings.py`
 - Open a command line window and go to the project's directory.
 - `pip install -r requirements.txt`
 - `python manage.py makemigrations`
 - `python manage.py migrate`
-- `python manage.py runserver`
+- `python manage.py runserver` or `python manage.py runserver 0.0.0.0:<your_port>`
 - Open another command line window.
 - `cd frontend && npm install`
 - `npm start`
