@@ -76,7 +76,9 @@ const Detail = ({ id, productId, isOwn, onBackClick }) => {
       <Group>
         {!isOwn ? (
           <Div>
-            <Button size="xl">Забрать</Button>
+            <Button size="xl" href="https://vk.com/im?sel=53369046">
+              Забрать
+            </Button>
           </Div>
         ) : (
           <>
