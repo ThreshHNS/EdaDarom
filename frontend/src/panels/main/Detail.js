@@ -15,11 +15,12 @@ import {
   SimpleCell,
   InfoRow,
 } from "@vkontakte/vkui";
+import { moment } from "../../utils";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
 import product1fSize from "../../img/product1_fullsize.png";
 
 const Detail = ({ id, food, isOwn, onBackClick }) => {
-  console.log(food);
+  console.log(moment().format());
   return (
     <Panel id={id}>
       <PanelHeader left={<PanelHeaderBack onClick={() => onBackClick()} />}>
@@ -34,6 +35,7 @@ const Detail = ({ id, food, isOwn, onBackClick }) => {
                 backgroundImage: `url(${food.photo_url})`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center center",
+                marginTop: 14,
               }}
             >
               <div style={{ height: 183 }} />
@@ -46,7 +48,12 @@ const Detail = ({ id, food, isOwn, onBackClick }) => {
 
             <Cell
               before={
-                <svg width="14" height="14" viewBox="0 0 14 14">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  style={{ marginTop: 6 }}
+                >
                   <circle cx="7" cy="7" r="7" fill="#B6F0B6" />
                   <circle cx="7" cy="7" r="4" fill="#4BB34B" />
                 </svg>
@@ -57,18 +64,20 @@ const Detail = ({ id, food, isOwn, onBackClick }) => {
                 className="Text__Secondary"
                 style={{ marginLeft: 8 }}
               >
-                Активно еще {food.duration} часов
+                Активно еще {moment(food.duration).fromNow(true)}
               </Text>
             </Cell>
           </Group>
-          <Group>
-            <Cell before={<Icon32Place />}>
-              <Text weight="medium">Наб.Обводного канала,17</Text>
-              <Text weight="regular" className="Text__Secondary">
-                {Math.floor(food.distance.toFixed(1) / 1000)}км от вас
-              </Text>
-            </Cell>
-          </Group>
+          {food.distance && (
+            <Group>
+              <Cell before={<Icon32Place />}>
+                <Text weight="medium">Наб.Обводного канала,17</Text>
+                <Text weight="regular" className="Text__Secondary">
+                  {Math.floor(food.distance.toFixed(1) / 1000)}км от вас
+                </Text>
+              </Cell>
+            </Group>
+          )}
           <Group>
             <SimpleCell multiline>
               <InfoRow header="Описание">{food.description}</InfoRow>
@@ -77,7 +86,12 @@ const Detail = ({ id, food, isOwn, onBackClick }) => {
           <Group>
             {!isOwn ? (
               <Div>
-                <Button size="xl">Забрать</Button>
+                <Button
+                  size="xl"
+                  href={`https://vk.com/im?sel=${food.user.properties.vk_id}`}
+                >
+                  Забрать
+                </Button>
               </Div>
             ) : (
               <>
@@ -105,8 +119,9 @@ const Detail = ({ id, food, isOwn, onBackClick }) => {
 
 Detail.propTypes = {
   id: PropTypes.string.isRequired,
-  activePanel: PropTypes.string.isRequired,
+  food: PropTypes.object,
   isOwn: PropTypes.bool,
+  onBackClick: PropTypes.func.isRequired,
 };
 
 export default Detail;

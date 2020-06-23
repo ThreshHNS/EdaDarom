@@ -40,6 +40,7 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
 
   useEffect(() => {
     if (vkUser && geoLocation && geoLocation.coordinates) {
+      console.log("geo", geoLocation);
       const geo = {
         type: "Point",
         coordinates: geoLocation.currentGeo.center,
@@ -54,7 +55,7 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
       userPost(user);
       localStorage.setItem("alreadyLaunched", true);
     }
-  }, [vkUser, geoLocation]);
+  }, [vkUser, geoLocation, userPost]);
 
   useEffect(() => {
     if (galleryPage === 2) {
@@ -70,19 +71,23 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
       bridge
         .send("VKWebAppGetGeodata")
         .then((data) => {
+          console.log("geodata", data);
           // Обработка события в случае успеха
-          setGeoLocation({
-            lat: data.lat,
-            long: data.long,
-            firstEntry: false,
-            currentGeo: {
-              center: [data.lat, data.long],
-              zoom: 15,
-            },
-            coordinates: [[data.lat, data.long]],
-          });
+          if (data.available) {
+            setGeoLocation({
+              lat: data.lat,
+              long: data.long,
+              firstEntry: false,
+              currentGeo: {
+                center: [data.lat, data.long],
+                zoom: 15,
+              },
+              coordinates: [[data.lat, data.long]],
+            });
+          }
         })
         .catch((error) => {
+          console.log(error);
           // Обработка события в случае ошибки
         });
     }
@@ -111,13 +116,14 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
           <YMaps>
             <div style={{ marginTop: 20, marginBottom: 12 }}>
               <Map
+                width="100% "
                 defaultState={geoLocation.currentGeo}
                 instanceRef={(ref) => {
                   ref && ref.behaviors.disable("drag") && setMapVisible(true);
                 }}
               >
                 {geoLocation.coordinates.map((coordinate) => (
-                  <Placemark geometry={coordinate} />
+                  <Placemark key={coordinate} geometry={coordinate} />
                 ))}
               </Map>
             </div>

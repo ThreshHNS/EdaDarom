@@ -16,8 +16,10 @@ import product1 from "../../img/product1.png";
 import product2 from "../../img/product2.png";
 import product3 from "../../img/product3.png";
 import product4 from "../../img/product4.png";
-import Detail from "./Detail";
 import * as actions from "../../store/actions/food";
+import { moment } from "../../utils";
+
+import Detail from "./Detail";
 
 const Feed = ({ id, activePanel, vkId, nearestFood, foodNearest }) => {
   const [selectedFood, setSelectedFood] = useState(null);
@@ -38,24 +40,16 @@ const Feed = ({ id, activePanel, vkId, nearestFood, foodNearest }) => {
     }
   }, [vkId, foodNearest]);
 
-  useEffect(() => {
-    console.log("selectedFood", selectedFood);
-  }, [selectedFood]);
-
   return (
     <View id={id} activePanel={feedPanel}>
       <Panel id={id}>
         <PanelHeader>Еда даром</PanelHeader>
         <Group separator="hide">
-          {nearestFood.length && (
+          {nearestFood.length > 0 && (
             <CardGrid>
               {nearestFood.map((food) => (
-                // Правильно! Ключ нужно определять внутри массива:
-                <Tappable key={food.id}>
-                  <div
-                    className="Card__Product"
-                    onClick={() => getDetails(food)}
-                  >
+                <Tappable key={food.id} onClick={() => getDetails(food)}>
+                  <div className="Card__Product">
                     <div className="Card__Product_image">
                       <img src={food.photo_url} alt="Product Preview" />
                     </div>
@@ -88,7 +82,7 @@ const Feed = ({ id, activePanel, vkId, nearestFood, foodNearest }) => {
                           className="Text__Secondary"
                           style={{ marginLeft: 8 }}
                         >
-                          Активно еще {food.duration} дней
+                          Активно еще {moment(food.duration).fromNow(true)}
                         </Text>
                       </div>
                     </div>

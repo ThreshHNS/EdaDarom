@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.response import Response
 from .models import VKUser, Food
-from .serializers import VKUserSerializer, FoodSerializer
+from .serializers import VKUserSerializer, FoodSerializer, FoodNearestSerializer
 
 
 class VKUserViewSet(viewsets.ModelViewSet):
@@ -40,16 +40,30 @@ class FoodViewSet(viewsets.ModelViewSet):
         if user is not None:
             radius = user.notifications_radius * 10000000
             ref_location = user.location_coordinates
-            # TODO: Exclude own food
             queryset = (
                 Food.objects.annotate(
                     distance=Distance("user__location_coordinates", ref_location)
                 )
                 .filter(distance__lte=radius)
+                .exclude(user__vk_id=vk_id)
                 .order_by("distance")
+            )
+            serializer = FoodNearestSerializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False)
+    def own(self, request):
+        vk_id = self.request.query_params.get("vk_id")
+        user = VKUser.objects.filter(vk_id=vk_id).first()
+        if user is not None:
+            queryset = (
+                Food
+                .objects
+                .filter(user__vk_id=vk_id)
             )
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
-

@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 from django.contrib.gis.db.models import PointField
 from .utils import path_and_rename
 
@@ -44,12 +46,17 @@ class Food(models.Model):
 
     user = models.ForeignKey("VKUser", on_delete=models.CASCADE)
 
-    publication_date = models.DateField(auto_now_add=True)
-    duration = models.IntegerField(default=5)  # days (1-30)
+    publication_date = models.DateTimeField(auto_now_add=True)
+    duration = models.DurationField()  # days (1-30)
     photo_url = models.ImageField("Изображение", upload_to=path_and_rename, blank=True)
     title = models.TextField()
     description = models.TextField()
     status = models.SmallIntegerField(choices=STATUS_CHOICES, default=DONE)
+
+    def get_duration(self):
+        print(self.publication_date)
+        return self.publication_date + self.duration
+
     def __str__(self):
         return f"{self.user} - {self.title}"
 

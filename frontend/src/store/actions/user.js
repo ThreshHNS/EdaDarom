@@ -2,7 +2,7 @@ import { axios } from "../../utils";
 import * as actionTypes from "./actionTypes";
 
 export const userPostSuccess = (user) => {
-  console.log(user);
+  console.log("success", user);
   return {
     type: actionTypes.USER_POST_SUCCESS,
     user,
@@ -32,14 +32,16 @@ export const userGetFail = (error) => {
 };
 
 export const userPost = (user) => {
+  console.log("post", user);
   return (dispatch) => {
     axios
       .post("/users/", user)
       .then((res) => {
+        console.log("res", res.data);
         dispatch(userPostSuccess(res.data));
       })
       .catch((err) => {
-        console.log(err.response.data);
+        console.log(err.response);
         dispatch(userPostFail(err.message));
       });
   };

@@ -55,3 +55,17 @@ export const foodNearest = (id) => {
       });
   };
 };
+
+export const foodOwn = (id) => {
+  return (dispatch) => {
+    axios
+      .get("/food/own/", { params: { vk_id: id } })
+      .then((res) => {
+        console.log(res.data);
+        dispatch(foodOwnSuccess(res.data));
+      })
+      .catch((err) => {
+        dispatch(foodOwnFail(err.message));
+      });
+  };
+};
