@@ -19,7 +19,7 @@ import * as actions from "../../store/actions/food";
 import { moment } from "../../utils";
 import Detail from "./Detail";
 
-const Home = ({ id, vkId, ownFood, foodOwn, activePanel }) => {
+const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
   const [selectedFood, setSelectedFood] = useState(null);
   const [feedPanel, setFeedPanel] = useState(activePanel);
 
@@ -33,10 +33,14 @@ const Home = ({ id, vkId, ownFood, foodOwn, activePanel }) => {
   };
 
   useEffect(() => {
-    if (vkId) {
-      foodOwn(vkId);
+    console.log("token", token);
+  }, [token]);
+
+  useEffect(() => {
+    if (token && vkId) {
+      foodOwn(token, vkId);
     }
-  }, [vkId, foodOwn]);
+  }, [vkId, token, foodOwn]);
 
   return (
     <View id={id} activePanel={feedPanel}>
@@ -49,7 +53,7 @@ const Home = ({ id, vkId, ownFood, foodOwn, activePanel }) => {
                 <Tappable key={food.id} onClick={() => getDetails(food)}>
                   <div className="Card__Product">
                     <div className="Card__Product_image">
-                      <img src={food.photo_url} alt="Product Preview" />
+                      <img src={food.image} alt="Product Preview" />
                     </div>
                     <div className="Card__Product_info">
                       <Title
@@ -100,13 +104,14 @@ Home.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  token: state.user.token,
   vkId: state.user.vkId,
   ownFood: state.food.own,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    foodOwn: (id) => dispatch(actions.foodOwn(id)),
+    foodOwn: (token, id) => dispatch(actions.foodOwn(token, id)),
   };
 };
 

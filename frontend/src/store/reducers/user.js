@@ -17,6 +17,7 @@ const initialState = {
 
 const userPostSuccess = (state, action) => {
   return updateObject(state, {
+    token: action.token,
     vkId: action.user.properties.vk_id,
     firstName: action.user.properties.first_name,
     lastName: action.user.properties.last_name,
@@ -37,18 +38,18 @@ const userPostFail = (state, action) => {
   });
 };
 
-const userGetSuccess = (state, action) => {
-  return updateObject(state, {
-    loading: false,
-  });
-};
+// const userGetSuccess = (state, action) => {
+//   return updateObject(state, {
+//     loading: false,
+//   });
+// };
 
-const userGetFail = (state, action) => {
-  return updateObject(state, {
-    error: action.error,
-    loading: false,
-  });
-};
+// const userGetFail = (state, action) => {
+//   return updateObject(state, {
+//     error: action.error,
+//     loading: false,
+//   });
+// };
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -56,10 +57,10 @@ const reducer = (state = initialState, action) => {
       return userPostSuccess(state, action);
     case actionTypes.USER_POST_FAIL:
       return userPostFail(state, action);
-    case actionTypes.USER_GET_SUCCESS:
-      return userGetSuccess(state, action);
-    case actionTypes.USER_GET_FAIL:
-      return userGetFail(state, action);
+    // case actionTypes.USER_GET_SUCCESS:
+    //   return userGetSuccess(state, action);
+    // case actionTypes.USER_GET_FAIL:
+    //   return userGetFail(state, action);
     default:
       return state;
   }

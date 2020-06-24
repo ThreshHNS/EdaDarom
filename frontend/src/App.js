@@ -10,6 +10,7 @@ import "./assets/style.css";
 const App = () => {
   const [activePanel, setActivePanel] = useState("welcome");
   const [popout, setPopout] = useState(<ScreenSpinner size="large" />);
+  const [queryParams, setQueryParams] = useState();
 
   useEffect(() => {
     bridge.subscribe(({ detail: { type, data } }) => {
@@ -21,6 +22,7 @@ const App = () => {
     });
 
     let alreadyLaucned = localStorage.getItem("alreadyLaunched");
+    setQueryParams(window.location.search);
 
     if (alreadyLaucned) {
       setActivePanel("main");
@@ -39,10 +41,17 @@ const App = () => {
         activePanel={activePanel}
         setActivePanel={setActivePanel}
         popout={popout}
+        queryParams={queryParams}
         go={go}
       />
 
-      <Main id="main" activePanel={activePanel} popout={popout} go={go} />
+      <Main
+        id="main"
+        activePanel={activePanel}
+        popout={popout}
+        queryParams={queryParams}
+        go={go}
+      />
     </Root>
   );
 };

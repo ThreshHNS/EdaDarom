@@ -25,7 +25,15 @@ import pizza from "../img/pizza.png";
 import person from "../img/person.png";
 import home from "../img/home.png";
 
-const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
+const Welcome = ({
+  id,
+  activePanel,
+  setActivePanel,
+  popout,
+  go,
+  queryParams,
+  userCreate,
+}) => {
   const [galleryPage, setGalleryPage] = useState(0);
   const [geoLocation, setGeoLocation] = useState({
     lat: null,
@@ -51,11 +59,12 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
         last_name: vkUser.last_name,
         avatar_url: vkUser.photo_max_orig,
         location_coordinates: geo,
+        query_params: queryParams,
       };
-      userPost(user);
+      userCreate(user);
       localStorage.setItem("alreadyLaunched", true);
     }
-  }, [vkUser, geoLocation, userPost]);
+  }, [vkUser, geoLocation, userCreate]);
 
   useEffect(() => {
     if (galleryPage === 2) {
@@ -71,7 +80,6 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
       bridge
         .send("VKWebAppGetGeodata")
         .then((data) => {
-          console.log("geodata", data);
           // Обработка события в случае успеха
           if (data.available) {
             setGeoLocation({
@@ -263,7 +271,7 @@ Welcome.propTypes = {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    userPost: (user) => dispatch(actions.userPost(user)),
+    userCreate: (user) => dispatch(actions.userCreate(user)),
   };
 };
 

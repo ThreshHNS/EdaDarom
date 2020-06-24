@@ -51,7 +51,7 @@ const Feed = ({ id, activePanel, vkId, nearestFood, foodNearest }) => {
                 <Tappable key={food.id} onClick={() => getDetails(food)}>
                   <div className="Card__Product">
                     <div className="Card__Product_image">
-                      <img src={food.photo_url} alt="Product Preview" />
+                      <img src={food.image} alt="Product Preview" />
                     </div>
                     <div className="Card__Product_info">
                       <Title

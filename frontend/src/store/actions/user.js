@@ -5,7 +5,8 @@ export const userPostSuccess = (user) => {
   console.log("success", user);
   return {
     type: actionTypes.USER_POST_SUCCESS,
-    user,
+    token: user.token,
+    user: user.user,
   };
 };
 
@@ -17,25 +18,25 @@ export const userPostFail = (error) => {
   };
 };
 
-export const userGetSuccess = (user) => {
-  return {
-    type: actionTypes.USER_GET_SUCCESS,
-    user,
-  };
-};
+// export const userGetSuccess = (user) => {
+//   return {
+//     type: actionTypes.USER_GET_SUCCESS,
+//     user,
+//   };
+// };
 
-export const userGetFail = (error) => {
-  return {
-    type: actionTypes.USER_GET_FAIL,
-    error: error,
-  };
-};
+// export const userGetFail = (error) => {
+//   return {
+//     type: actionTypes.USER_GET_FAIL,
+//     error: error,
+//   };
+// };
 
-export const userPost = (user) => {
+export const userCreate = (user) => {
   console.log("post", user);
   return (dispatch) => {
     axios
-      .post("/users/", user)
+      .post("/auth/create/", user)
       .then((res) => {
         console.log("res", res.data);
         dispatch(userPostSuccess(res.data));
@@ -47,14 +48,17 @@ export const userPost = (user) => {
   };
 };
 
-export const userGet = (id) => {
+export const userLogin = (queryParams) => {
+  console.log("queryParams", queryParams);
   return (dispatch) => {
     axios
-      .get("/users/1/", { params: { vk_id: id } })
+      .post("/auth/login/", { query_params: queryParams })
       .then((res) => {
+        console.log(res.data);
         dispatch(userPostSuccess(res.data));
       })
       .catch((err) => {
+        console.log(err.response);
         dispatch(userPostFail(err.message));
       });
   };

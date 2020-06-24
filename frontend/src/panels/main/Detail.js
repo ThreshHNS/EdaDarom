@@ -20,7 +20,6 @@ import Icon32Place from "@vkontakte/icons/dist/32/place";
 import product1fSize from "../../img/product1_fullsize.png";
 
 const Detail = ({ id, food, isOwn, onBackClick }) => {
-  console.log(moment().format());
   return (
     <Panel id={id}>
       <PanelHeader left={<PanelHeaderBack onClick={() => onBackClick()} />}>
@@ -32,7 +31,7 @@ const Detail = ({ id, food, isOwn, onBackClick }) => {
             <Card
               size="l"
               style={{
-                backgroundImage: `url(${food.photo_url})`,
+                backgroundImage: `url(${food.image})`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center center",
                 marginTop: 14,

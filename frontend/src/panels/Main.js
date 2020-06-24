@@ -11,32 +11,25 @@ import { Home, Feed, Add, Rating, Settings } from "./main";
 import bridge from "@vkontakte/vk-bridge";
 import * as actions from "../store/actions/user";
 
-const Main = ({ id, activePanel, isAuth, userGet, popout, go }) => {
+const Main = ({
+  id,
+  activePanel,
+  isAuth,
+  userLogin,
+  queryParams,
+  popout,
+  go,
+}) => {
   const [activeStory, setActiveStory] = useState("feed");
-  const [vkUser, setVkUser] = useState(null);
   const onStoryChange = (e) => {
     setActiveStory(e.currentTarget.dataset.story);
   };
 
   useEffect(() => {
-    console.log("start");
-    bridge
-      .send("VKWebAppGetUserInfo")
-      .then((data) => {
-        console.log("data", data);
-        setVkUser(data.id);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (vkUser && !isAuth) {
-      console.log("vkuser", vkUser);
-      userGet(vkUser);
+    if (!isAuth && queryParams) {
+      userLogin(queryParams);
     }
-  }, [isAuth, vkUser]);
+  }, [isAuth, activeStory]);
 
   return (
     <View activePanel={activePanel}>
@@ -105,7 +98,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    userGet: (id) => dispatch(actions.userGet(id)),
+    userLogin: (queryParams) => dispatch(actions.userLogin(queryParams)),
   };
 };
 

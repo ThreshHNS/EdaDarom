@@ -24,3 +24,4 @@ package-lock.json
 venv
 
 *.pyc
+.secrets.yaml

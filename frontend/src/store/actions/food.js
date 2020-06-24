@@ -43,10 +43,13 @@ export const foodPostFail = (error) => {
   };
 };
 
-export const foodNearest = (id) => {
+export const foodNearest = (token, id) => {
   return (dispatch) => {
     axios
-      .get("/food/nearest/", { params: { vk_id: id } })
+      .get("/food/nearest/", {
+        params: { vk_id: id },
+        headers: { Authorization: `Token ${token}` },
+      })
       .then((res) => {
         dispatch(foodNearestSuccess(res.data));
       })
@@ -56,12 +59,15 @@ export const foodNearest = (id) => {
   };
 };
 
-export const foodOwn = (id) => {
+export const foodOwn = (token, id) => {
+  console.log("owntoken", token);
   return (dispatch) => {
     axios
-      .get("/food/own/", { params: { vk_id: id } })
+      .get("/food/own/", {
+        params: { vk_id: id },
+        headers: { Authorization: `Token ${token}` },
+      })
       .then((res) => {
-        console.log(res.data);
         dispatch(foodOwnSuccess(res.data));
       })
       .catch((err) => {

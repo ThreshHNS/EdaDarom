@@ -36,11 +36,11 @@
 
 .Card__Product_image {
   height: 154px;
-  flex: 0.5;
+  width: 118px;
 }
 
 .Card__Product_image img {
-  width: auto;
+  width: 100%;
   height: 100%;
 }
 

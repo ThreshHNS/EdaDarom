@@ -1,25 +1,42 @@
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from .models import VKUser, Food
 from datetime import datetime
 
+User = get_user_model()
+
 
 class VKUserSerializer(GeoFeatureModelSerializer):
     class Meta:
-        model = VKUser
+        model = User
         geo_field = "location_coordinates"
-        fields = "__all__"
+        exclude = ("username", "password")
+        extra_kwargs = {"location_title": {"required": False}}
+
+
+class UserCreateSerializer(GeoFeatureModelSerializer):
+    query_params = serializers.CharField()
+
+    class Meta:
+        model = User
+        geo_field = "location_coordinates"
+        exclude = ("username", "password")
         extra_kwargs = {"location_title": {"required": False}}
 
     def create(self, validated_data):
-        # TODO: Update user instance with updated fields in VK
-        vk_id = validated_data.get("vk_id", None)
-        if vk_id is not None:
-            user = VKUser.objects.filter(vk_id=vk_id).first()
-            if user is not None:
-                return user
-        user = VKUser.objects.create(**validated_data)
+        user = User.objects.create_user(**validated_data)
         return user
+
+
+class UserLoginSerializer(serializers.Serializer):
+    query_params = serializers.CharField()
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Incorrect Credentials")
 
 
 class FoodNearestSerializer(serializers.ModelSerializer):
