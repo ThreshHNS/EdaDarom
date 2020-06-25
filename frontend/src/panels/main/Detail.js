@@ -17,7 +17,6 @@ import {
 } from "@vkontakte/vkui";
 import { moment } from "../../utils";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
-import product1fSize from "../../img/product1_fullsize.png";
 
 const Detail = ({ id, food, isOwn, onBackClick }) => {
   return (
@@ -63,7 +62,7 @@ const Detail = ({ id, food, isOwn, onBackClick }) => {
                 className="Text__Secondary"
                 style={{ marginLeft: 8 }}
               >
-                Активно еще {moment(food.duration).fromNow(true)}
+                Активно еще {moment(food.end_date).fromNow(true)}
               </Text>
             </Cell>
           </Group>

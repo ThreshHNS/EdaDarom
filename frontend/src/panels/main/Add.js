@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
   View,
@@ -13,17 +14,18 @@ import {
   File,
   Button,
 } from "@vkontakte/vkui";
+import * as actions from "../../store/actions/food";
 import Icon24AddOutline from "@vkontakte/icons/dist/24/add_outline";
 import Icon24Write from "@vkontakte/icons/dist/24/write";
 
-const Add = ({ id, activePanel }) => {
-  const [food, setFood] = useState({
-    name: null,
-    days: null,
-    description: "",
-  });
-  const [file, setFile] = useState(null);
+const Add = ({ id, activePanel, token, foodCreate }) => {
   const [image, setImage] = useState(null);
+  const [food, setFood] = useState({
+    title: null,
+    duration_days: null,
+    description: "",
+    image: null,
+  });
   const [isValid, setIsValid] = useState(true);
 
   const onChange = (e) => {
@@ -34,10 +36,18 @@ const Add = ({ id, activePanel }) => {
   const submitFood = () => {
     const valid = !Object.values(food).some((x) => x === null);
     setIsValid(valid);
-    if (isValid) {
-      // Submit Food to Backend
-      console.log(food);
+    if (token && isValid) {
+      const data = new FormData();
+      Object.keys(food).forEach((key) => data.append(key, food[key]));
+      foodCreate(token, data);
     }
+  };
+
+  const uploadImage = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    setFood({ ...food, image: file });
+    setImage(URL.createObjectURL(file));
   };
 
   const addImage = () => {
@@ -54,20 +64,6 @@ const Add = ({ id, activePanel }) => {
     );
   };
 
-  const uploadImage = (e) => {
-    e.preventDefault();
-
-    let reader = new FileReader();
-    let file = e.target.files[0];
-
-    reader.onloadend = () => {
-      setFile(file);
-      setImage(reader.result);
-    };
-
-    reader.readAsDataURL(file);
-  };
-
   return (
     <View id={id} activePanel={activePanel}>
       <Panel id={id}>
@@ -76,11 +72,11 @@ const Add = ({ id, activePanel }) => {
         <FormLayout>
           <File
             mode="secondary"
-            before={!file ? <Icon24AddOutline /> : <Icon24Write />}
+            before={!image ? <Icon24AddOutline /> : <Icon24Write />}
             controlSize="xl"
             onChange={uploadImage}
           >
-            {!file ? "Добавить фото" : "Изменить фото"}
+            {!image ? "Добавить фото" : "Изменить фото"}
           </File>
           {!isValid && (
             <FormStatus header="Обязательные поля" mode="error">
@@ -91,14 +87,14 @@ const Add = ({ id, activePanel }) => {
           <Input
             top="Название продукта"
             placeholder="Пельмени"
-            name="name"
+            name="title"
             onChange={onChange}
           />
 
           <Select
             top="Срок размещения"
             placeholder="Кол-во дней"
-            name="days"
+            name="duration_days"
             onChange={onChange}
           >
             <option value="1">1 день</option>
@@ -129,6 +125,18 @@ const Add = ({ id, activePanel }) => {
 Add.propTypes = {
   id: PropTypes.string.isRequired,
   activePanel: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  foodCreate: PropTypes.func,
 };
 
-export default Add;
+const mapStateToProps = (state) => ({
+  token: state.user.token,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    foodCreate: (token, food) => dispatch(actions.foodCreate(token, food)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Add);

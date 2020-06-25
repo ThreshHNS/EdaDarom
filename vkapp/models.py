@@ -51,14 +51,18 @@ class Food(models.Model):
     user = models.ForeignKey("VKUser", on_delete=models.CASCADE)
 
     publication_date = models.DateTimeField("Дата размещения", auto_now_add=True)
-    duration = models.DurationField("Продолжительность")  # days (1-30)
-    image = models.ImageField("Изображение", upload_to=path_and_rename, blank=True)
+    duration_days = models.IntegerField("Продолжительность")
+    end_date = models.DateTimeField("Дата завершения", blank=True, null=True)
+    image = models.ImageField("Изображение", upload_to=path_and_rename)
     title = models.TextField("Заголовок")
     description = models.TextField("Описание")
     status = models.SmallIntegerField("Статус", choices=STATUS_CHOICES, default=ACTIVE)
 
-    def get_duration(self):
-        return self.publication_date + self.duration
+    def save(self, *args, **kwargs):
+        days = timedelta(days=self.duration_days)
+        if not self.id:
+            self.end_date = timezone.now() + days
+            super(Food, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user} - {self.title}"

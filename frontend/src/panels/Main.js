@@ -8,7 +8,6 @@ import Icon28AddCircleOutline from "@vkontakte/icons/dist/28/add_circle_outline"
 import Icon28PollSquareOutline from "@vkontakte/icons/dist/28/poll_square_outline";
 import Icon28SettingsOutline from "@vkontakte/icons/dist/28/settings_outline";
 import { Home, Feed, Add, Rating, Settings } from "./main";
-import bridge from "@vkontakte/vk-bridge";
 import * as actions from "../store/actions/user";
 
 const Main = ({
@@ -29,7 +28,7 @@ const Main = ({
     if (!isAuth && queryParams) {
       userLogin(queryParams);
     }
-  }, [isAuth, activeStory]);
+  }, [isAuth, queryParams, userLogin]);
 
   return (
     <View activePanel={activePanel}>

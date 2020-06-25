@@ -48,7 +48,6 @@ const Welcome = ({
 
   useEffect(() => {
     if (vkUser && geoLocation && geoLocation.coordinates) {
-      console.log("geo", geoLocation);
       const geo = {
         type: "Point",
         coordinates: geoLocation.currentGeo.center,
@@ -64,7 +63,7 @@ const Welcome = ({
       userCreate(user);
       localStorage.setItem("alreadyLaunched", true);
     }
-  }, [vkUser, geoLocation, userCreate]);
+  }, [vkUser, geoLocation, queryParams, userCreate]);
 
   useEffect(() => {
     if (galleryPage === 2) {

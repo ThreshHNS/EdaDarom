@@ -12,16 +12,12 @@ import {
   Tappable,
 } from "@vkontakte/vkui";
 import Icon24Place from "@vkontakte/icons/dist/24/place";
-import product1 from "../../img/product1.png";
-import product2 from "../../img/product2.png";
-import product3 from "../../img/product3.png";
-import product4 from "../../img/product4.png";
 import * as actions from "../../store/actions/food";
 import { moment } from "../../utils";
 
 import Detail from "./Detail";
 
-const Feed = ({ id, activePanel, vkId, nearestFood, foodNearest }) => {
+const Feed = ({ token, id, activePanel, nearestFood, foodNearest }) => {
   const [selectedFood, setSelectedFood] = useState(null);
   const [feedPanel, setFeedPanel] = useState(activePanel);
 
@@ -35,10 +31,10 @@ const Feed = ({ id, activePanel, vkId, nearestFood, foodNearest }) => {
   };
 
   useEffect(() => {
-    if (vkId) {
-      foodNearest(vkId);
+    if (token) {
+      foodNearest(token);
     }
-  }, [vkId, foodNearest]);
+  }, [token, foodNearest]);
 
   return (
     <View id={id} activePanel={feedPanel}>
@@ -82,7 +78,7 @@ const Feed = ({ id, activePanel, vkId, nearestFood, foodNearest }) => {
                           className="Text__Secondary"
                           style={{ marginLeft: 8 }}
                         >
-                          Активно еще {moment(food.duration).fromNow(true)}
+                          Активно еще {moment(food.end_date).fromNow(true)}
                         </Text>
                       </div>
                     </div>
@@ -102,16 +98,19 @@ const Feed = ({ id, activePanel, vkId, nearestFood, foodNearest }) => {
 Feed.propTypes = {
   id: PropTypes.string.isRequired,
   activePanel: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  nearestFood: PropTypes.array,
+  foodNearest: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
-  vkId: state.user.vkId,
+  token: state.user.token,
   nearestFood: state.food.nearest,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    foodNearest: (id) => dispatch(actions.foodNearest(id)),
+    foodNearest: (token) => dispatch(actions.foodNearest(token)),
   };
 };
 

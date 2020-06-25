@@ -39,16 +39,20 @@ class UserLoginSerializer(serializers.Serializer):
         raise serializers.ValidationError("Incorrect Credentials")
 
 
+class FoodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Food
+        fields = "__all__"
+        read_only_fields = ("user",)
+        extra_kwargs = {"status": {"required": False}}
+
+
 class FoodNearestSerializer(serializers.ModelSerializer):
     user = VKUserSerializer()
     distance = serializers.SerializerMethodField()
-    duration = serializers.SerializerMethodField()
 
     def get_distance(self, obj):
         return obj.distance.m
-
-    def get_duration(self, obj):
-        return obj.get_duration()
 
     class Meta:
         model = Food
@@ -56,12 +60,8 @@ class FoodNearestSerializer(serializers.ModelSerializer):
         extra_kwargs = {"status": {"required": False}}
 
 
-class FoodSerializer(serializers.ModelSerializer):
+class FoodOwnSerializer(serializers.ModelSerializer):
     user = VKUserSerializer()
-    duration = serializers.SerializerMethodField()
-
-    def get_duration(self, obj):
-        return obj.get_duration()
 
     class Meta:
         model = Food

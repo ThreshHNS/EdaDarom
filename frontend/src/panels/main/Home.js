@@ -11,10 +11,6 @@ import {
   Group,
   Tappable,
 } from "@vkontakte/vkui";
-import Icon24Place from "@vkontakte/icons/dist/24/place";
-import product4 from "../../img/product4.png";
-import product5 from "../../img/product5.png";
-import product6 from "../../img/product6.png";
 import * as actions from "../../store/actions/food";
 import { moment } from "../../utils";
 import Detail from "./Detail";
@@ -33,14 +29,10 @@ const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
   };
 
   useEffect(() => {
-    console.log("token", token);
-  }, [token]);
-
-  useEffect(() => {
-    if (token && vkId) {
-      foodOwn(token, vkId);
+    if (token) {
+      foodOwn(token);
     }
-  }, [vkId, token, foodOwn]);
+  }, [token, foodOwn]);
 
   return (
     <View id={id} activePanel={feedPanel}>
@@ -78,7 +70,7 @@ const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
                           className="Text__Secondary"
                           style={{ marginLeft: 8 }}
                         >
-                          Активно еще {moment(food.duration).fromNow(true)}
+                          {food.end_date}
                         </Text>
                       </div>
                     </div>
@@ -98,20 +90,19 @@ const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
 Home.propTypes = {
   id: PropTypes.string.isRequired,
   activePanel: PropTypes.string.isRequired,
-  vkId: PropTypes.number,
+  token: PropTypes.string,
   ownFood: PropTypes.array,
   foodOwn: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
   token: state.user.token,
-  vkId: state.user.vkId,
   ownFood: state.food.own,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    foodOwn: (token, id) => dispatch(actions.foodOwn(token, id)),
+    foodOwn: (token) => dispatch(actions.foodOwn(token)),
   };
 };
 
