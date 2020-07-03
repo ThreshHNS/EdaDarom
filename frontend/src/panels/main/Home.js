@@ -11,22 +11,15 @@ import {
   Group,
   Tappable,
 } from "@vkontakte/vkui";
+import bridge from "@vkontakte/vk-bridge";
 import * as actions from "../../store/actions/food";
 import { moment } from "../../utils";
 import Detail from "./Detail";
 
-const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
+const Home = ({ token, id, ownFood, foodOwn, activePanel }) => {
   const [selectedFood, setSelectedFood] = useState(null);
   const [feedPanel, setFeedPanel] = useState(activePanel);
-
-  const getDetails = (food) => {
-    setSelectedFood(food);
-    setFeedPanel("detail");
-  };
-
-  const onBackClick = () => {
-    setFeedPanel(id);
-  };
+  const [historyPanel, setHistoryPanel] = useState([activePanel]);
 
   useEffect(() => {
     if (token) {
@@ -34,8 +27,35 @@ const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
     }
   }, [token, foodOwn]);
 
+  const getDetails = (food) => {
+    const history = [...historyPanel];
+    history.push("detail");
+    if (feedPanel === activePanel) {
+      bridge.send("VKWebAppEnableSwipeBack");
+    }
+    setSelectedFood(food);
+    setHistoryPanel(history);
+    setFeedPanel("detail");
+  };
+
+  const goBack = () => {
+    const history = [...historyPanel];
+    history.pop();
+    const currentPanel = history[history.length - 1];
+    if (currentPanel === activePanel) {
+      bridge.send("VKWebAppDisableSwipeBack");
+    }
+    setHistoryPanel(history);
+    setFeedPanel(activePanel);
+  };
+
   return (
-    <View id={id} activePanel={feedPanel}>
+    <View
+      id={id}
+      history={historyPanel}
+      activePanel={feedPanel}
+      onSwipeBack={goBack}
+    >
       <Panel id={id}>
         <PanelHeader>Мои объявления</PanelHeader>
         <Group separator="hide">
@@ -45,7 +65,7 @@ const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
                 <Tappable key={food.id} onClick={() => getDetails(food)}>
                   <div className="Card__Product">
                     <div className="Card__Product_image">
-                      <img src={food.image} alt="Product Preview" />
+                      <img src={food.image_preview} alt="Product Preview" />
                     </div>
                     <div className="Card__Product_info">
                       <Title
@@ -70,7 +90,7 @@ const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
                           className="Text__Secondary"
                           style={{ marginLeft: 8 }}
                         >
-                          {food.end_date}
+                          Активно еще {moment(food.end_date).fromNow(true)}
                         </Text>
                       </div>
                     </div>
@@ -82,7 +102,7 @@ const Home = ({ token, id, vkId, ownFood, foodOwn, activePanel }) => {
         </Group>
       </Panel>
 
-      <Detail id="detail" food={selectedFood} isOwn onBackClick={onBackClick} />
+      <Detail id="detail" food={selectedFood} isOwn goBack={goBack} />
     </View>
   );
 };

@@ -18,25 +18,26 @@ import {
 import { moment } from "../../utils";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
 
-const Detail = ({ id, food, isOwn, onBackClick }) => {
+const Detail = ({ id, food, isOwn, goBack }) => {
   return (
     <Panel id={id}>
-      <PanelHeader left={<PanelHeaderBack onClick={() => onBackClick()} />}>
+      <PanelHeader left={<PanelHeaderBack onClick={() => goBack()} />}>
         Подробнее
       </PanelHeader>
       {food && (
         <>
           <CardGrid>
-            <Card
-              size="l"
-              style={{
-                backgroundImage: `url(${food.image})`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center center",
-                marginTop: 14,
-              }}
-            >
-              <div style={{ height: 183 }} />
+            <Card size="l" style={{ marginTop: 14 }}>
+              <img
+                src={food.image}
+                style={{
+                  height: 193,
+                  width: "auto",
+                  display: "block",
+                  margin: "0 auto",
+                }}
+                alt="Product Preview"
+              />
             </Card>
           </CardGrid>
           <Group>
@@ -119,7 +120,7 @@ Detail.propTypes = {
   id: PropTypes.string.isRequired,
   food: PropTypes.object,
   isOwn: PropTypes.bool,
-  onBackClick: PropTypes.func.isRequired,
+  goBack: PropTypes.func.isRequired,
 };
 
 export default Detail;

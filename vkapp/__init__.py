@@ -1,2 +1,1 @@
-
-# default_app_config = 'vkapp.apps.VKUserConfig'
+default_app_config = 'vkapp.apps.VKUserConfig'

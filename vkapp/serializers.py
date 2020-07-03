@@ -11,8 +11,23 @@ class VKUserSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = User
         geo_field = "location_coordinates"
-        exclude = ("username", "password")
-        extra_kwargs = {"location_title": {"required": False}}
+        exclude = (
+            "username",
+            "password",
+            "email",
+            "last_login",
+            "groups",
+            "user_permissions",
+        )
+        extra_kwargs = {
+            "location_title": {"required": False},
+            "vk_id": {"required": False},
+            "first_name": {"required": False},
+            "last_name": {"required": False},
+            "is_active": {"required": False, "read_only": True},
+            "is_staff": {"required": False, "read_only": True},
+            "is_superuser": {"required": False, "read_only": True},
+        }
 
 
 class UserCreateSerializer(GeoFeatureModelSerializer):

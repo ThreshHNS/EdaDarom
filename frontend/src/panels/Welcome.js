@@ -25,15 +25,7 @@ import pizza from "../img/pizza.png";
 import person from "../img/person.png";
 import home from "../img/home.png";
 
-const Welcome = ({
-  id,
-  activePanel,
-  setActivePanel,
-  popout,
-  go,
-  queryParams,
-  userCreate,
-}) => {
+const Welcome = ({ id, setFirstLaunch, scheme, queryParams, userCreate }) => {
   const [galleryPage, setGalleryPage] = useState(0);
   const [geoLocation, setGeoLocation] = useState({
     lat: null,
@@ -108,14 +100,7 @@ const Welcome = ({
         header={<ModalPageHeader>Ты на карте</ModalPageHeader>}
       >
         {!mapVisible && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              flexDirection: "column",
-              height: 240,
-            }}
-          >
+          <div className="Welcome__Spinner_loading">
             <Spinner size="large" />
           </div>
         )}
@@ -123,7 +108,7 @@ const Welcome = ({
           <YMaps>
             <div style={{ marginTop: 20, marginBottom: 12 }}>
               <Map
-                width="100% "
+                width="100%"
                 defaultState={geoLocation.currentGeo}
                 instanceRef={(ref) => {
                   ref && ref.behaviors.disable("drag") && setMapVisible(true);
@@ -139,7 +124,7 @@ const Welcome = ({
         <Button
           size="l"
           stretched
-          onClick={() => setActivePanel("main")}
+          onClick={() => setFirstLaunch(false)}
           style={{ padding: "4px 0px" }}
         >
           Сохранить
@@ -149,42 +134,33 @@ const Welcome = ({
   );
 
   const FirstSlide = () => (
-    <Panel id={id} centered>
+    <Panel id="welcome" centered>
       <div className="Welcome__Icon">
         <img src={pizza} alt="Pizza Icon" />
       </div>
-      <Text
-        weight="regular"
-        style={{ textAlign: "center", width: "75%", color: "#404040" }}
-      >
+      <Text weight="regular" className="Welcome__Text" style={{ width: "75%" }}>
         Ежегодно в мире выбрасывается около 884 млн тонн еды...
       </Text>
     </Panel>
   );
 
   const SecondSlide = () => (
-    <Panel id={id} centered>
+    <Panel id="welcome" centered>
       <div className="Welcome__Icon">
         <img src={person} alt="Soup Icon" />
       </div>
-      <Text
-        weight="regular"
-        style={{ textAlign: "center", width: "70%", color: "#404040" }}
-      >
+      <Text weight="regular" className="Welcome__Text" style={{ width: "70%" }}>
         Но зачем выбрасывать, если можно ее кому-нибудь отдать?
       </Text>
     </Panel>
   );
 
   const ThirdSlide = () => (
-    <Panel id={id} centered>
+    <Panel id="welcome" centered>
       <div className="Welcome__Icon">
         <img src={home} alt="Location Icon" />
       </div>
-      <Text
-        weight="regular"
-        style={{ textAlign: "center", width: "75%", color: "#404040" }}
-      >
+      <Text weight="regular" className="Welcome__Text" style={{ width: "75%" }}>
         Обменивайся лишней едой с теми, кто живет неподалеку.
       </Text>
     </Panel>
@@ -198,7 +174,6 @@ const Welcome = ({
             size="l"
             stretched
             className="Welcome__Button"
-            style={{ margin: "0px 20px", padding: "4px 0px" }}
             onClick={() => setGalleryPage(1)}
           >
             Это ужасно!
@@ -210,7 +185,6 @@ const Welcome = ({
             size="l"
             stretched
             className="Welcome__Button"
-            style={{ margin: "0px 20px", padding: "4px 0px" }}
             onClick={() => setGalleryPage(2)}
           >
             Действительно
@@ -223,7 +197,6 @@ const Welcome = ({
             stretched
             mode="commerce"
             className="Welcome__Button"
-            style={{ margin: "0px 20px", padding: "4px 0px" }}
             onClick={() => setGeoModal("geo")}
           >
             Определить локацию
@@ -238,15 +211,15 @@ const Welcome = ({
     }
   };
   return (
-    <View activePanel={activePanel} popout={popout} modal={modal}>
-      <Panel id={id}>
+    <View activePanel="welcome" modal={modal}>
+      <Panel id="welcome">
         <PanelHeader>Еда даром</PanelHeader>
 
         <Group header={<Header mode="secondary"></Header>}>
           <Gallery
             slideWidth="100%"
-            style={{ height: "100%", paddingBottom: 85, postion: "relative" }}
-            bullets="dark"
+            className="Welcome__Gallery"
+            bullets={scheme === "space_gray" ? "light" : "dark"}
             onChange={(number) => setGalleryPage(number)}
             slideIndex={galleryPage}
           >
@@ -255,6 +228,7 @@ const Welcome = ({
             <ThirdSlide />
           </Gallery>
         </Group>
+
         <Div style={{ display: "flex", marginTop: 15 }}>
           {renderButton(galleryPage)}
         </Div>
@@ -265,7 +239,9 @@ const Welcome = ({
 
 Welcome.propTypes = {
   id: PropTypes.string.isRequired,
-  go: PropTypes.func.isRequired,
+  setFirstLaunch: PropTypes.func.isRequired,
+  queryParams: PropTypes.string,
+  userCreate: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch) => {

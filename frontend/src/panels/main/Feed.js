@@ -5,12 +5,15 @@ import {
   View,
   Panel,
   PanelHeader,
+  Placeholder,
   CardGrid,
   Title,
   Text,
   Group,
   Tappable,
 } from "@vkontakte/vkui";
+import bridge from "@vkontakte/vk-bridge";
+import Icon56InfoOutline from "@vkontakte/icons/dist/56/info_outline";
 import Icon24Place from "@vkontakte/icons/dist/24/place";
 import * as actions from "../../store/actions/food";
 import { moment } from "../../utils";
@@ -20,15 +23,7 @@ import Detail from "./Detail";
 const Feed = ({ token, id, activePanel, nearestFood, foodNearest }) => {
   const [selectedFood, setSelectedFood] = useState(null);
   const [feedPanel, setFeedPanel] = useState(activePanel);
-
-  const getDetails = (food) => {
-    setSelectedFood(food);
-    setFeedPanel("detail");
-  };
-
-  const onBackClick = () => {
-    setFeedPanel(id);
-  };
+  const [historyPanel, setHistoryPanel] = useState([activePanel]);
 
   useEffect(() => {
     if (token) {
@@ -36,18 +31,45 @@ const Feed = ({ token, id, activePanel, nearestFood, foodNearest }) => {
     }
   }, [token, foodNearest]);
 
+  const getDetails = (food) => {
+    const history = [...historyPanel];
+    history.push("detail");
+    if (feedPanel === activePanel) {
+      bridge.send("VKWebAppEnableSwipeBack");
+    }
+    setSelectedFood(food);
+    setHistoryPanel(history);
+    setFeedPanel("detail");
+  };
+
+  const goBack = () => {
+    const history = [...historyPanel];
+    history.pop();
+    const currentPanel = history[history.length - 1];
+    if (currentPanel === activePanel) {
+      bridge.send("VKWebAppDisableSwipeBack");
+    }
+    setHistoryPanel(history);
+    setFeedPanel(activePanel);
+  };
+
   return (
-    <View id={id} activePanel={feedPanel}>
+    <View
+      id={id}
+      history={historyPanel}
+      activePanel={feedPanel}
+      onSwipeBack={goBack}
+    >
       <Panel id={id}>
         <PanelHeader>Еда даром</PanelHeader>
         <Group separator="hide">
-          {nearestFood.length > 0 && (
+          {nearestFood.length > 0 ? (
             <CardGrid>
               {nearestFood.map((food) => (
                 <Tappable key={food.id} onClick={() => getDetails(food)}>
                   <div className="Card__Product">
                     <div className="Card__Product_image">
-                      <img src={food.image} alt="Product Preview" />
+                      <img src={food.image_preview} alt="Product Preview" />
                     </div>
                     <div className="Card__Product_info">
                       <Title
@@ -86,11 +108,17 @@ const Feed = ({ token, id, activePanel, nearestFood, foodNearest }) => {
                 </Tappable>
               ))}
             </CardGrid>
+          ) : (
+            <Placeholder icon={<Icon56InfoOutline />} stretched>
+              Нет доступных предложений
+              <br />
+              рядом с вами
+            </Placeholder>
           )}
         </Group>
       </Panel>
 
-      <Detail id="detail" food={selectedFood} onBackClick={onBackClick} />
+      <Detail id="detail" food={selectedFood} goBack={goBack} />
     </View>
   );
 };

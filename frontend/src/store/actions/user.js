@@ -16,6 +16,12 @@ export const userPostFail = (error) => {
   };
 };
 
+export const userUpdateSuccess = (user) => {
+  return {
+    type: actionTypes.USER_UPDATE_SUCCESS,
+    user: user,
+  };
+};
 // export const userGetSuccess = (user) => {
 //   return {
 //     type: actionTypes.USER_GET_SUCCESS,
@@ -52,6 +58,22 @@ export const userLogin = (queryParams) => {
       })
       .catch((err) => {
         dispatch(userPostFail(err.message));
+      });
+  };
+};
+
+export const userUpdate = (token, user) => {
+  return (dispatch) => {
+    axios
+      .put("/users/1/", user, {
+        headers: { Authorization: `Token ${token}` },
+      })
+      .then((res) => {
+        const user = res.data;
+        dispatch(userUpdateSuccess(user));
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 };

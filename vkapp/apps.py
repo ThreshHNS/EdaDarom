@@ -1,8 +1,8 @@
-# from django.apps import AppConfig
+from django.apps import AppConfig
 
 
-# class VKUserConfig(AppConfig):
-#     name = 'vkapp'
+class VKUserConfig(AppConfig):
+    name = 'vkapp'
 
-#     def ready(self):
-#         import vkapp.signals
+    def ready(self):
+        import vkapp.signals

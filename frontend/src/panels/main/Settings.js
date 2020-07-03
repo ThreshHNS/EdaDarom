@@ -26,7 +26,9 @@ const Settings = ({
   lastName,
   avatar,
   city,
+  country,
   radius,
+  locationTitle,
   notificationStatus,
 }) => {
   const [settingsPanel, setSettingsPanel] = useState(activePanel);
@@ -43,7 +45,7 @@ const Settings = ({
         <RichCell
           disabled
           before={<Avatar size={72} src={avatar} />}
-          caption="Санкт-Петербург"
+          caption={country}
         >
           {firstName} {lastName}
         </RichCell>
@@ -79,9 +81,9 @@ const Settings = ({
         <Group>
           <Tappable onClick={() => setSettingsPanel("location")}>
             <Cell before={<Icon32Place />}>
-              <Text weight="medium">Наб.Обводного канала,17</Text>
+              <Text weight="medium">{locationTitle}</Text>
               <Text weight="regular" className="Text__Secondary">
-                0.4км от вас
+                {city}
               </Text>
             </Cell>
           </Tappable>
@@ -102,8 +104,10 @@ const mapStateToProps = (state) => ({
   firstName: state.user.firstName,
   lastName: state.user.lastName,
   city: state.user.city,
+  country: state.user.country,
   avatar: state.user.avatar,
   radius: state.user.radius,
+  locationTitle: state.user.locationTitle,
   notificationStatus: state.user.notificationStatus,
 });
 

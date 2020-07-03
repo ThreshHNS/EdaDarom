@@ -140,7 +140,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 DEFAULT_USER_PASSWORD_LENGTH = 16
-
+FOOD_IMAGE_WIDTH = 118
+FOOD_IMAGE_HEIGHT = 154
 # HERE STARTS DYNACONF EXTENSION LOAD (Keep at the very bottom of settings.py)
 # Read more at https://dynaconf.readthedocs.io/en/latest/guides/django.html
 import dynaconf  # noqa

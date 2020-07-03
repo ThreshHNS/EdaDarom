@@ -7,6 +7,7 @@ const initialState = {
   firstName: null,
   lastName: null,
   city: null,
+  country: null,
   avatar: null,
   locationCoords: [],
   locationTitle: null,
@@ -23,6 +24,7 @@ const userPostSuccess = (state, action) => {
     lastName: action.user.properties.last_name,
     avatar: action.user.properties.avatar_url,
     city: action.user.properties.city,
+    country: action.user.properties.country,
     locatrionCoords: action.user.geometry.coodinates,
     locationTitle: action.user.properties.location_title,
     radius: action.user.properties.notifications_radius,
@@ -38,6 +40,20 @@ const userPostFail = (state, action) => {
   });
 };
 
+const userUpdateSuccess = (state, action) => {
+  return updateObject(state, {
+    firstName: action.user.properties.first_name,
+    lastName: action.user.properties.last_name,
+    avatar: action.user.properties.avatar_url,
+    city: action.user.properties.city,
+    country: action.user.properties.country,
+    locatrionCoords: action.user.geometry.coodinates,
+    locationTitle: action.user.properties.location_title,
+    radius: action.user.properties.notifications_radius,
+    notificationStatus: action.user.properties.notifications_status,
+    loading: false,
+  });
+};
 // const userGetSuccess = (state, action) => {
 //   return updateObject(state, {
 //     loading: false,
@@ -57,6 +73,8 @@ const reducer = (state = initialState, action) => {
       return userPostSuccess(state, action);
     case actionTypes.USER_POST_FAIL:
       return userPostFail(state, action);
+    case actionTypes.USER_UPDATE_SUCCESS:
+      return userUpdateSuccess(state, action);
     // case actionTypes.USER_GET_SUCCESS:
     //   return userGetSuccess(state, action);
     // case actionTypes.USER_GET_FAIL:

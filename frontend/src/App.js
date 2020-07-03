@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import bridge from "@vkontakte/vk-bridge";
-import { Root, ScreenSpinner } from "@vkontakte/vkui";
+import { ConfigProvider } from "@vkontakte/vkui";
 import "@vkontakte/vkui/dist/vkui.css";
 
 import { Welcome, Main } from "./panels";
@@ -8,51 +8,44 @@ import { Welcome, Main } from "./panels";
 import "./assets/style.css";
 
 const App = () => {
-  const [activePanel, setActivePanel] = useState("welcome");
-  const [popout, setPopout] = useState(<ScreenSpinner size="large" />);
+  const [scheme, setScheme] = useState(null);
   const [queryParams, setQueryParams] = useState();
+  const [firstLauch, setFirstLaunch] = useState(false);
 
   useEffect(() => {
     bridge.subscribe(({ detail: { type, data } }) => {
       if (type === "VKWebAppUpdateConfig") {
-        const schemeAttribute = document.createAttribute("scheme");
-        schemeAttribute.value = data.scheme ? data.scheme : "client_light";
-        document.body.attributes.setNamedItem(schemeAttribute);
+        setScheme(data.scheme);
       }
     });
+
+    //  Init VK  Mini App
+    bridge.send("VKWebAppInit");
 
     let alreadyLaucned = localStorage.getItem("alreadyLaunched");
     setQueryParams(window.location.search);
 
-    if (alreadyLaucned) {
-      setActivePanel("main");
+    if (!alreadyLaucned) {
+      setFirstLaunch(true);
     }
-    setPopout(null);
   }, []);
 
-  const go = (e) => {
-    setActivePanel(e.currentTarget.dataset.to);
-  };
+  if (firstLauch) {
+    return (
+      <ConfigProvider isWebView={true} scheme={scheme}>
+        <Welcome
+          setFirstLaunch={setFirstLaunch}
+          scheme={scheme}
+          queryParams={queryParams}
+        />
+      </ConfigProvider>
+    );
+  }
 
   return (
-    <Root activeView={activePanel}>
-      <Welcome
-        id="welcome"
-        activePanel={activePanel}
-        setActivePanel={setActivePanel}
-        popout={popout}
-        queryParams={queryParams}
-        go={go}
-      />
-
-      <Main
-        id="main"
-        activePanel={activePanel}
-        popout={popout}
-        queryParams={queryParams}
-        go={go}
-      />
-    </Root>
+    <ConfigProvider isWebView={true} scheme={scheme}>
+      <Main queryParams={queryParams} />
+    </ConfigProvider>
   );
 };
 

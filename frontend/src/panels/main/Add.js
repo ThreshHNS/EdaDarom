@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
@@ -55,7 +55,12 @@ const Add = ({ id, activePanel, token, foodCreate }) => {
       <CardGrid>
         <div className="Add__Preview">
           <img
-            style={{ height: "100%", width: "100%" }}
+            style={{
+              height: 193,
+              width: "auto",
+              display: "block",
+              margin: "0 auto",
+            }}
             src={image}
             alt="Product Preview"
           />

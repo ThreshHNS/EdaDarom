@@ -49,14 +49,23 @@ class VKUserViewSet(viewsets.ModelViewSet):
     """
     A viewset that provides the standard actions
     """
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
 
     queryset = VKUser.objects.all()
     serializer_class = VKUserSerializer
 
-    def retrieve(self, request, pk=None):
-        serializer = VKUserSerializer(queryset)
-        return Response(serializer.data)
+    def get_object(self):
+        return self.request.user
 
+    def get_queryset(self):
+        return self.get_object()
+
+    def list(self, request, *args, **kwargs):
+        instance = request.user
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 class FoodViewSet(viewsets.ModelViewSet):
     """
@@ -79,9 +88,8 @@ class FoodViewSet(viewsets.ModelViewSet):
         radius = user.notifications_radius * 10000000
         ref_location = user.location_coordinates
         queryset = (
-            Food.objects.annotate(
-                distance=Distance("user__location_coordinates", ref_location)
-            )
+            Food.objects
+            .annotate(distance=Distance("user__location_coordinates", ref_location))
             .filter(distance__lte=radius)
             .exclude(user=user)
             .order_by("distance")
@@ -94,7 +102,11 @@ class FoodViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def own(self, request):
         user = request.user
-        queryset = Food.objects.filter(user=user)
+        queryset = (
+            Food.objects
+            .filter(user=user)
+            .order_by("end_date")
+        )
         serializer = FoodOwnSerializer(
             queryset, context={"request": request}, many=True
         )
