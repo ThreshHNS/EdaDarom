@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
@@ -16,10 +16,12 @@ import {
   Tappable,
 } from "@vkontakte/vkui";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
+import * as actions from "../../store/actions/user";
 
 import Location from "./Location";
 
 const Settings = ({
+  token,
   id,
   activePanel,
   firstName,
@@ -30,9 +32,40 @@ const Settings = ({
   radius,
   locationTitle,
   notificationStatus,
+  userUpdate,
 }) => {
+  const userProfile = {
+    notifications_radius: radius,
+    notifications_status: notificationStatus,
+  };
   const [settingsPanel, setSettingsPanel] = useState(activePanel);
-  const [isNotifications, setIsNotifications] = useState(notificationStatus);
+  const [profileValue, setProfileValue] = useState({
+    notifications_radius: radius,
+    notifications_status: notificationStatus,
+  });
+
+  useEffect(() => {
+    setProfileValue({
+      notifications_radius: radius,
+      notifications_status: notificationStatus,
+    });
+  }, [radius, notificationStatus]);
+
+  useEffect(() => {
+    if (token && JSON.stringify(profileValue) !== JSON.stringify(userProfile)) {
+      userUpdate(token, profileValue);
+    }
+  }, [token, profileValue]);
+
+  const onChangeStatus = (e) => {
+    const { name } = e.currentTarget;
+    setProfileValue({ ...profileValue, [name]: !profileValue[name] });
+  };
+
+  const onChangeRadius = (e) => {
+    const { name, value } = e.currentTarget;
+    setProfileValue({ ...profileValue, [name]: parseInt(value) });
+  };
 
   const onBackClick = () => {
     setSettingsPanel(id);
@@ -54,8 +87,9 @@ const Settings = ({
             description="Получать уведомления о еде рядом."
             asideContent={
               <Switch
-                checked={isNotifications}
-                onChange={() => setIsNotifications(!isNotifications)}
+                name="notifications_status"
+                checked={profileValue["notifications_status"]}
+                onChange={onChangeStatus}
               />
             }
           >
@@ -65,10 +99,12 @@ const Settings = ({
         <Group>
           <FormLayout>
             <Select
-              disabled={!isNotifications}
+              name="notifications_radius"
               top="Радиус поиска"
               placeholder="Укажите радиус поиска еды"
-              value={radius}
+              value={profileValue["notifications_radius"]}
+              onChange={onChangeRadius}
+              disabled={!profileValue["notifications_status"]}
             >
               <option value="1">1 км</option>
               <option value="2">2 км</option>
@@ -101,14 +137,21 @@ Settings.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  token: state.user.token,
   firstName: state.user.firstName,
   lastName: state.user.lastName,
   city: state.user.city,
   country: state.user.country,
   avatar: state.user.avatar,
-  radius: state.user.radius,
   locationTitle: state.user.locationTitle,
+  radius: state.user.radius,
   notificationStatus: state.user.notificationStatus,
 });
 
-export default connect(mapStateToProps)(Settings);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    userUpdate: (token, user) => dispatch(actions.userUpdate(token, user)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);

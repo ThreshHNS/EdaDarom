@@ -8,7 +8,7 @@ const Rating = ({ id, activePanel }) => {
     <View id={id} activePanel={activePanel}>
       <Panel id={id} centered>
         <PanelHeader>Рейтинг</PanelHeader>
-        <div className="Welcome__Icon" style={{ marginTop: "50%" }}>
+        <div className="Welcome__Icon">
           <img src={rating} alt="Rating Icon" />
         </div>
         <Text

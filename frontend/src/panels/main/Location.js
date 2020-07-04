@@ -13,6 +13,8 @@ import bridge from "@vkontakte/vk-bridge";
 import { getGeoInfo } from "../../utils/";
 import * as actions from "../../store/actions/user";
 
+const YANDEX_API_KEY = process.env.REACT_APP_YANDEX_API_KEY;
+
 const Location = ({ id, onBackClick, token, userUpdate }) => {
   const [suggestValue, setSuggestValue] = useState("");
   const [suggestView, setSuggestView] = useState();
@@ -69,10 +71,11 @@ const Location = ({ id, onBackClick, token, userUpdate }) => {
       };
     }
   }, [suggestView, yMaps]);
-
   useEffect(() => {
     if (token && geoLocation.coordinates && geoLocation.address) {
       const [country, ...city] = geoLocation.address.split(", ", 3);
+      console.log("country", country);
+      console.log("city", city);
       const location_title = geoLocation.title;
       const geo = {
         type: "Point",
@@ -122,10 +125,11 @@ const Location = ({ id, onBackClick, token, userUpdate }) => {
       </FixedLayout>
 
       {geoLocation.coordinates && (
-        <YMaps query={{ apikey: "" }}>
+        <YMaps query={{ apikey: YANDEX_API_KEY }}>
           <Map
             onClick={onMapClick}
             onLoad={(ymaps) => onLoadMap(ymaps)}
+            options={{ suppressMapOpenBlock: true }}
             defaultState={geoLocation.currentGeo}
             modules={["SuggestView", "geocode"]}
             instanceRef={mapRef}

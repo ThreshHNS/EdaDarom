@@ -26,4 +26,5 @@ venv
 *.pyc
 .secrets.yaml
 
+*.env
 media/image

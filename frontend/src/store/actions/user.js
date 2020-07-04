@@ -73,7 +73,7 @@ export const userUpdate = (token, user) => {
         dispatch(userUpdateSuccess(user));
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data);
       });
   };
 };
