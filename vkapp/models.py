@@ -45,10 +45,10 @@ class Food(models.Model):
 	Advertisement about free food
 	"""
 
-    DONE = 0
-    ACTIVE = 1
-    OUTDATED = 2
-    CANCELED = -1
+    DONE = "Done"
+    ACTIVE = "Active"
+    OUTDATED = "Outdated"
+    CANCELED = "Canceled"
     STATUS_CHOICES = (
         (DONE, "Done"),
         (ACTIVE, "Active"),
@@ -66,8 +66,8 @@ class Food(models.Model):
         "Предпросмотр", upload_to=path_and_rename, blank=True, null=True
     )
     title = models.TextField("Заголовок")
-    description = models.TextField("Описание")
-    status = models.SmallIntegerField("Статус", choices=STATUS_CHOICES, default=ACTIVE)
+    description = models.TextField("Описание", blank=True, null=True)
+    status = models.CharField("Статус", max_length=8, choices=STATUS_CHOICES, default=ACTIVE)
 
     def compress_image(self, file, mode="resize"):
         imageTemproary = Image.open(file)
@@ -75,7 +75,7 @@ class Food(models.Model):
         if mode is "resize":
             width = imageTemproary.size[0]
             height = imageTemproary.size[1]
-            new_height = settings.FOOD_IMAGE_HEIGHT * 3
+            new_height = settings.FOOD_IMAGE_HEIGHT * 3 
             new_width = int(new_height * width / height)
             imageTemproaryResized = imageTemproary.resize(
                 (new_width, new_height), Image.ANTIALIAS

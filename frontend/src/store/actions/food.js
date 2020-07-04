@@ -1,6 +1,12 @@
 import { axios } from "../../utils";
 import * as actionTypes from "./actionTypes";
 
+export const foodNearestStart = () => {
+  return {
+    type: actionTypes.FOOD_NEAREST_START,
+  };
+};
+
 export const foodNearestSuccess = (food) => {
   return {
     type: actionTypes.FOOD_NEAREST_SUCCESS,
@@ -12,6 +18,12 @@ export const foodNearestFail = (error) => {
   return {
     type: actionTypes.FOOD_NEAREST_FAIL,
     error: error,
+  };
+};
+
+export const foodOwnStart = () => {
+  return {
+    type: actionTypes.FOOD_OWN_START,
   };
 };
 
@@ -29,6 +41,12 @@ export const foodOwnFail = (error) => {
   };
 };
 
+export const foodPostStart = () => {
+  return {
+    type: actionTypes.FOOD_POST_START,
+  };
+};
+
 export const foodPostSuccess = (food) => {
   return {
     type: actionTypes.FOOD_POST_SUCCESS,
@@ -43,8 +61,23 @@ export const foodPostFail = (error) => {
   };
 };
 
+export const foodDeleteSuccess = (id) => {
+  return {
+    type: actionTypes.FOOD_DELETE_SUCCESS,
+    id,
+  };
+};
+
+export const foodDeleteFail = (error) => {
+  return {
+    type: actionTypes.FOOD_DELETE_FAIL,
+    error: error,
+  };
+};
+
 export const foodNearest = (token) => {
   return (dispatch) => {
+    dispatch(foodNearestStart());
     axios
       .get("/food/nearest/", {
         headers: { Authorization: `Token ${token}` },
@@ -60,6 +93,7 @@ export const foodNearest = (token) => {
 
 export const foodOwn = (token) => {
   return (dispatch) => {
+    dispatch(foodOwnStart());
     axios
       .get("/food/own/", {
         headers: { Authorization: `Token ${token}` },
@@ -75,6 +109,7 @@ export const foodOwn = (token) => {
 
 export const foodCreate = (token, food) => {
   return (dispatch) => {
+    dispatch(foodPostStart());
     axios
       .post("/food/", food, {
         headers: {
@@ -83,8 +118,41 @@ export const foodCreate = (token, food) => {
         },
       })
       .then((res) => {
-        //TODO: Dispatch FoodCreateSuccess
+        dispatch(foodPostSuccess(res.data));
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  };
+};
+
+export const foodUpdate = (token, id, food) => {
+  return (dispatch) => {
+    axios
+      .patch(`/food/${id}/`, food, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+      .then((res) => {
         console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  };
+};
+
+export const foodDelete = (token, id) => {
+  return (dispatch) => {
+    axios
+      .delete(`/food/${id}/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+      .then(() => {
+        dispatch(foodDeleteSuccess(id));
       })
       .catch((err) => {
         console.log(err.response.data);

@@ -90,7 +90,7 @@ class FoodViewSet(viewsets.ModelViewSet):
         queryset = (
             Food.objects
             .annotate(distance=Distance("user__location_coordinates", ref_location))
-            .filter(distance__lte=radius)
+            .filter(distance__lte=radius, status="Active")
             .exclude(user=user)
             .order_by("distance")
         )
@@ -104,7 +104,7 @@ class FoodViewSet(viewsets.ModelViewSet):
         user = request.user
         queryset = (
             Food.objects
-            .filter(user=user)
+            .filter(user=user, status="Active")
             .order_by("end_date")
         )
         serializer = FoodOwnSerializer(

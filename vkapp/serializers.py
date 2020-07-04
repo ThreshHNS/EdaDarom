@@ -61,7 +61,6 @@ class FoodSerializer(serializers.ModelSerializer):
         read_only_fields = ("user",)
         extra_kwargs = {"status": {"required": False}}
 
-
 class FoodNearestSerializer(serializers.ModelSerializer):
     user = VKUserSerializer()
     distance = serializers.SerializerMethodField()

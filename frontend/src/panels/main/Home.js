@@ -5,24 +5,37 @@ import {
   View,
   Panel,
   PanelHeader,
+  Placeholder,
+  Button,
   CardGrid,
   Title,
   Text,
   Group,
   Tappable,
+  PullToRefresh,
 } from "@vkontakte/vkui";
 import bridge from "@vkontakte/vk-bridge";
+import Icon56InfoOutline from "@vkontakte/icons/dist/56/info_outline";
 import * as actions from "../../store/actions/food";
 import { moment } from "../../utils";
+
 import Detail from "./Detail";
 
-const Home = ({ token, id, ownFood, foodOwn, activePanel }) => {
+const Home = ({
+  token,
+  id,
+  ownFood,
+  isLoading,
+  foodOwn,
+  activePanel,
+  setActiveStory,
+}) => {
   const [selectedFood, setSelectedFood] = useState(null);
   const [feedPanel, setFeedPanel] = useState(activePanel);
   const [historyPanel, setHistoryPanel] = useState([activePanel]);
 
   useEffect(() => {
-    if (token) {
+    if (token && !ownFood.length) {
       foodOwn(token);
     }
   }, [token, foodOwn]);
@@ -49,6 +62,12 @@ const Home = ({ token, id, ownFood, foodOwn, activePanel }) => {
     setFeedPanel(activePanel);
   };
 
+  const onRefresh = () => {
+    if (token) {
+      foodOwn(token);
+    }
+  };
+
   return (
     <View
       id={id}
@@ -58,48 +77,68 @@ const Home = ({ token, id, ownFood, foodOwn, activePanel }) => {
     >
       <Panel id={id}>
         <PanelHeader>Мои объявления</PanelHeader>
-        <Group separator="hide">
-          {ownFood.length > 0 && (
-            <CardGrid>
-              {ownFood.map((food) => (
-                <Tappable key={food.id} onClick={() => getDetails(food)}>
-                  <div className="Card__Product">
-                    <div className="Card__Product_image">
-                      <img src={food.image_preview} alt="Product Preview" />
-                    </div>
-                    <div className="Card__Product_info">
-                      <Title
-                        level="2"
-                        weight="semibold"
-                        className="Card__Product_info_title"
-                      >
-                        {food.title}
-                      </Title>
-                      <div className="Card__Product_info_text">
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          style={{ marginLeft: 5 }}
+        <PullToRefresh onRefresh={onRefresh} isFetching={isLoading}>
+          <Group separator="hide">
+            {ownFood.length > 0 ? (
+              <CardGrid>
+                {ownFood.map((food) => (
+                  <Tappable key={food.id} onClick={() => getDetails(food)}>
+                    <div className="Card__Product">
+                      <div className="Card__Product_image">
+                        <img src={food.image_preview} alt="Product Preview" />
+                      </div>
+                      <div className="Card__Product_info">
+                        <Title
+                          level="2"
+                          weight="semibold"
+                          className="Card__Product_info_title"
                         >
-                          <circle cx="7" cy="7" r="7" fill="#B6F0B6" />
-                          <circle cx="7" cy="7" r="4" fill="#4BB34B" />
-                        </svg>
-                        <Text
-                          weight="regular"
-                          className="Text__Secondary"
-                          style={{ marginLeft: 8 }}
-                        >
-                          Активно еще {moment(food.end_date).fromNow(true)}
-                        </Text>
+                          {food.title}
+                        </Title>
+                        <div className="Card__Product_info_text">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 14 14"
+                            style={{ marginLeft: 5 }}
+                          >
+                            <circle cx="7" cy="7" r="7" fill="#B6F0B6" />
+                            <circle cx="7" cy="7" r="4" fill="#4BB34B" />
+                          </svg>
+                          <Text
+                            weight="regular"
+                            className="Text__Secondary"
+                            style={{ marginLeft: 8 }}
+                          >
+                            Активно еще {moment(food.end_date).fromNow(true)}
+                          </Text>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Tappable>
-              ))}
-            </CardGrid>
-          )}
-        </Group>
+                  </Tappable>
+                ))}
+              </CardGrid>
+            ) : (
+              <Placeholder
+                icon={<Icon56InfoOutline />}
+                action={
+                  <Button
+                    size="l"
+                    mode="tertiary"
+                    onClick={() => setActiveStory("add")}
+                  >
+                    Опубликовать еду
+                  </Button>
+                }
+                stretched
+              >
+                У вас еще нет
+                <br />
+                выставленных объявлений
+              </Placeholder>
+            )}
+          </Group>
+        </PullToRefresh>
       </Panel>
 
       <Detail id="detail" food={selectedFood} isOwn goBack={goBack} />
@@ -112,12 +151,15 @@ Home.propTypes = {
   activePanel: PropTypes.string.isRequired,
   token: PropTypes.string,
   ownFood: PropTypes.array,
+  isLoading: PropTypes.bool,
   foodOwn: PropTypes.func,
+  setActiveStory: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
   token: state.user.token,
   ownFood: state.food.own,
+  isLoading: state.food.loading,
 });
 
 const mapDispatchToProps = (dispatch) => {

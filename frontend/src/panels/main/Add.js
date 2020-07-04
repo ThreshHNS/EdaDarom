@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
@@ -13,12 +13,21 @@ import {
   Textarea,
   File,
   Button,
+  ScreenSpinner,
 } from "@vkontakte/vkui";
 import * as actions from "../../store/actions/food";
 import Icon24AddOutline from "@vkontakte/icons/dist/24/add_outline";
 import Icon24Write from "@vkontakte/icons/dist/24/write";
 
-const Add = ({ id, activePanel, token, foodCreate }) => {
+const Add = ({
+  id,
+  activePanel,
+  token,
+  isLoading,
+  setActiveStory,
+  foodCreate,
+}) => {
+  const [popout, setPopout] = useState(null);
   const [image, setImage] = useState(null);
   const [food, setFood] = useState({
     title: null,
@@ -27,6 +36,14 @@ const Add = ({ id, activePanel, token, foodCreate }) => {
     image: null,
   });
   const [isValid, setIsValid] = useState(true);
+  const [isSent, setIsSent] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading && isSent) {
+      setPopout(null);
+      setActiveStory("home");
+    }
+  }, [isLoading, isSent]);
 
   const onChange = (e) => {
     const { name, value } = e.currentTarget;
@@ -40,6 +57,8 @@ const Add = ({ id, activePanel, token, foodCreate }) => {
       const data = new FormData();
       Object.keys(food).forEach((key) => data.append(key, food[key]));
       foodCreate(token, data);
+      setIsSent(true);
+      setPopout(<ScreenSpinner />);
     }
   };
 
@@ -70,7 +89,7 @@ const Add = ({ id, activePanel, token, foodCreate }) => {
   };
 
   return (
-    <View id={id} activePanel={activePanel}>
+    <View id={id} activePanel={activePanel} popout={popout}>
       <Panel id={id}>
         <PanelHeader>Создать</PanelHeader>
         {image && addImage()}
@@ -136,6 +155,7 @@ Add.propTypes = {
 
 const mapStateToProps = (state) => ({
   token: state.user.token,
+  isLoading: state.food.loading,
 });
 
 const mapDispatchToProps = (dispatch) => {

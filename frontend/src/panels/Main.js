@@ -65,9 +65,9 @@ const Main = ({ isAuth, userLogin, queryParams }) => {
         </Tabbar>
       }
     >
-      <Home id="home" activePanel="home" />
+      <Home id="home" activePanel="home" setActiveStory={setActiveStory} />
       <Feed id="feed" activePanel="feed" />
-      <Add id="add" activePanel="add" />
+      <Add id="add" activePanel="add" setActiveStory={setActiveStory} />
       <Rating id="rating" activePanel="rating" />
       <Settings id="settings" activePanel="settings" />
     </Epic>

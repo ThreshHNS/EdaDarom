@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Button,
@@ -17,8 +18,25 @@ import {
 } from "@vkontakte/vkui";
 import { moment } from "../../utils";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
+import * as actions from "../../store/actions/food";
 
-const Detail = ({ id, food, isOwn, goBack }) => {
+const Detail = ({ id, token, food, isOwn, foodUpdate, foodDelete, goBack }) => {
+  const [isTaken, setIsTaken] = useState(false);
+
+  const updateStatus = () => {
+    if (token && food) {
+      foodUpdate(token, food.id, { status: "Done" });
+      setIsTaken(true);
+    }
+  };
+
+  const deleteFood = () => {
+    if (token && food) {
+      foodDelete(token, food.id);
+      goBack();
+    }
+  };
+
   return (
     <Panel id={id}>
       <PanelHeader left={<PanelHeaderBack onClick={() => goBack()} />}>
@@ -79,7 +97,9 @@ const Detail = ({ id, food, isOwn, goBack }) => {
           )}
           <Group>
             <SimpleCell multiline>
-              <InfoRow header="Описание">{food.description}</InfoRow>
+              <InfoRow header="Описание">
+                {food.description ? food.description : "Отсутствует "}
+              </InfoRow>
             </SimpleCell>
           </Group>
           <Group>
@@ -95,7 +115,9 @@ const Detail = ({ id, food, isOwn, goBack }) => {
             ) : (
               <>
                 <Div>
-                  <Button size="xl">Забрали</Button>
+                  <Button disabled={isTaken} size="xl" onClick={updateStatus}>
+                    Забрали
+                  </Button>
                 </Div>
                 <Div>
                   <Button size="xl" mode="secondary">
@@ -103,7 +125,12 @@ const Detail = ({ id, food, isOwn, goBack }) => {
                   </Button>
                 </Div>
                 <Div>
-                  <Button size="xl" mode="secondary" className="Button__Remove">
+                  <Button
+                    size="xl"
+                    mode="secondary"
+                    className="Button__Remove"
+                    onClick={deleteFood}
+                  >
                     Удалить
                   </Button>
                 </Div>
@@ -123,4 +150,16 @@ Detail.propTypes = {
   goBack: PropTypes.func.isRequired,
 };
 
-export default Detail;
+const mapStateToProps = (state) => ({
+  token: state.user.token,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    foodUpdate: (token, id, food) =>
+      dispatch(actions.foodUpdate(token, id, food)),
+    foodDelete: (token, id) => dispatch(actions.foodDelete(token, id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Detail);
