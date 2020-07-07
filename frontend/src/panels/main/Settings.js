@@ -134,6 +134,16 @@ const Settings = ({
 Settings.propTypes = {
   id: PropTypes.string.isRequired,
   activePanel: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  firstName: PropTypes.string,
+  lastName: PropTypes.string,
+  avatar: PropTypes.string,
+  city: PropTypes.string,
+  country: PropTypes.string,
+  radius: PropTypes.number,
+  locationTitle: PropTypes.string,
+  notificationStatus: PropTypes.bool,
+  userUpdate: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='food',
             name='image',
-            field=models.ImageField(upload_to=vkapp.utils.path_and_rename, verbose_name='Изображение'),
+            field=models.ImageField(upload_to=vkapp.utils.path_and_rename_image, verbose_name='Изображение'),
         ),
     ]

@@ -15,7 +15,7 @@ import * as actions from "../../store/actions/user";
 
 const YANDEX_API_KEY = process.env.REACT_APP_YANDEX_API_KEY;
 
-const Location = ({ id, onBackClick, token, userUpdate }) => {
+const Location = ({ id, token, userUpdate, onBackClick }) => {
   const [suggestValue, setSuggestValue] = useState("");
   const [suggestView, setSuggestView] = useState();
   const [yMaps, setYMaps] = useState();
@@ -71,11 +71,10 @@ const Location = ({ id, onBackClick, token, userUpdate }) => {
       };
     }
   }, [suggestView, yMaps]);
+
   useEffect(() => {
     if (token && geoLocation.coordinates && geoLocation.address) {
       const [country, ...city] = geoLocation.address.split(", ", 3);
-      console.log("country", country);
-      console.log("city", city);
       const location_title = geoLocation.title;
       const geo = {
         type: "Point",
@@ -149,6 +148,8 @@ const Location = ({ id, onBackClick, token, userUpdate }) => {
 
 Location.propTypes = {
   id: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  userUpdate: PropTypes.func,
   onBackClick: PropTypes.func.isRequired,
 };
 

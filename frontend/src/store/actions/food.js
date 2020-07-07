@@ -75,6 +75,20 @@ export const foodDeleteFail = (error) => {
   };
 };
 
+export const foodUpdateSuccess = (food) => {
+  return {
+    type: actionTypes.FOOD_UPDATE_SUCCESS,
+    food,
+  };
+};
+
+export const foodUpdateFail = (error) => {
+  return {
+    type: actionTypes.FOOD_UPDATE_FAIL,
+    error: error,
+  };
+};
+
 export const foodNearest = (token) => {
   return (dispatch) => {
     dispatch(foodNearestStart());
@@ -128,6 +142,8 @@ export const foodCreate = (token, food) => {
 
 export const foodUpdate = (token, id, food) => {
   return (dispatch) => {
+    dispatch(foodPostStart());
+
     axios
       .patch(`/food/${id}/`, food, {
         headers: {
@@ -135,10 +151,10 @@ export const foodUpdate = (token, id, food) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        dispatch(foodUpdateSuccess(res.data));
       })
       .catch((err) => {
-        console.log(err.response.data);
+        console.log(err.response);
       });
   };
 };
@@ -155,7 +171,7 @@ export const foodDelete = (token, id) => {
         dispatch(foodDeleteSuccess(id));
       })
       .catch((err) => {
-        console.log(err.response.data);
+        dispatch(foodDeleteFail(err.response.data));
       });
   };
 };

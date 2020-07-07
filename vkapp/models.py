@@ -1,16 +1,15 @@
 import sys
 import os
+import uuid
 from PIL import Image, ImageOps
 from io import BytesIO
 from django.db import models
-from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from datetime import timedelta
 from django.contrib.gis.db.models import PointField
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from .managers import VKUserManager
-from .utils import path_and_rename
+from .utils import path_and_rename_image, path_and_rename_preview
 
 
 class VKUser(AbstractUser):
@@ -55,15 +54,15 @@ class Food(models.Model):
         (OUTDATED, "Outdated"),
         (CANCELED, "Canceled"),
     )
-
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey("VKUser", on_delete=models.CASCADE)
 
     publication_date = models.DateTimeField("Дата размещения", auto_now_add=True)
     duration_days = models.IntegerField("Продолжительность")
     end_date = models.DateTimeField("Дата завершения", blank=True, null=True)
-    image = models.ImageField("Изображение", upload_to=path_and_rename)
+    image = models.ImageField("Изображение", upload_to=path_and_rename_image)
     image_preview = models.ImageField(
-        "Предпросмотр", upload_to=path_and_rename, blank=True, null=True
+        "Предпросмотр", upload_to=path_and_rename_preview, blank=True, null=True
     )
     title = models.TextField("Заголовок")
     description = models.TextField("Описание", blank=True, null=True)
@@ -99,14 +98,6 @@ class Food(models.Model):
             None,
         )
         return uploaded_image
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            days = timedelta(days=self.duration_days)
-            self.end_date = timezone.now() + days
-            self.image = self.compress_image(self.image)
-            self.image_preview = self.compress_image(self.image, mode="fit")
-        super(Food, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user} - {self.title}"

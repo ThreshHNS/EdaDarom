@@ -22,8 +22,8 @@ import { moment } from "../../utils";
 import Detail from "./Detail";
 
 const Feed = ({
-  token,
   id,
+  token,
   activePanel,
   isLoading,
   nearestFood,
@@ -141,8 +141,9 @@ const Feed = ({
 
 Feed.propTypes = {
   id: PropTypes.string.isRequired,
-  activePanel: PropTypes.string.isRequired,
   token: PropTypes.string,
+  activePanel: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool,
   nearestFood: PropTypes.array,
   foodNearest: PropTypes.func,
 };

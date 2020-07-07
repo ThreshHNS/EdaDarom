@@ -6,7 +6,7 @@ from rest_framework import status, viewsets, generics, permissions
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.parsers import FileUploadParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from knox.models import AuthToken
 from .models import VKUser, Food
 from .serializers import (
@@ -77,7 +77,7 @@ class FoodViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-    parser_class = (FileUploadParser, )
+    parser_class = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

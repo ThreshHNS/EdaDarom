@@ -25,7 +25,7 @@ import pizza from "../img/pizza.png";
 import person from "../img/person.png";
 import home from "../img/home.png";
 
-const Welcome = ({ id, setFirstLaunch, scheme, queryParams, userCreate }) => {
+const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
   const [galleryPage, setGalleryPage] = useState(0);
   const [geoLocation, setGeoLocation] = useState({
     lat: null,
@@ -67,30 +67,34 @@ const Welcome = ({ id, setFirstLaunch, scheme, queryParams, userCreate }) => {
         .catch((error) => {
           console.log(error);
         });
-
-      bridge
-        .send("VKWebAppGetGeodata")
-        .then((data) => {
-          // Обработка события в случае успеха
-          if (data.available) {
-            setGeoLocation({
-              lat: data.lat,
-              long: data.long,
-              firstEntry: false,
-              currentGeo: {
-                center: [data.lat, data.long],
-                zoom: 15,
-              },
-              coordinates: [[data.lat, data.long]],
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          // Обработка события в случае ошибки
-        });
     }
   }, [galleryPage]);
+
+  const openModal = () => {
+    bridge
+      .send("VKWebAppGetGeodata")
+      .then((data) => {
+        console.log(data);
+        // Обработка события в случае успеха
+        if (data.available) {
+          setGeoLocation({
+            lat: data.lat,
+            long: data.long,
+            firstEntry: false,
+            currentGeo: {
+              center: [data.lat, data.long],
+              zoom: 15,
+            },
+            coordinates: [[data.lat, data.long]],
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        // Обработка события в случае ошибки
+      });
+    setGeoModal("geo");
+  };
 
   const modal = (
     <ModalRoot activeModal={geoModal}>
@@ -197,7 +201,7 @@ const Welcome = ({ id, setFirstLaunch, scheme, queryParams, userCreate }) => {
             stretched
             mode="commerce"
             className="Welcome__Button"
-            onClick={() => setGeoModal("geo")}
+            onClick={openModal}
           >
             Определить локацию
           </Button>
@@ -238,7 +242,6 @@ const Welcome = ({ id, setFirstLaunch, scheme, queryParams, userCreate }) => {
 };
 
 Welcome.propTypes = {
-  id: PropTypes.string.isRequired,
   setFirstLaunch: PropTypes.func.isRequired,
   queryParams: PropTypes.string,
   userCreate: PropTypes.func,

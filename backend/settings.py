@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "django_celery_beat",
     "rest_framework",
     "rest_framework_gis",
     "knox",
@@ -144,6 +145,13 @@ FOOD_IMAGE_WIDTH = 118
 FOOD_IMAGE_HEIGHT = 154
 # HERE STARTS DYNACONF EXTENSION LOAD (Keep at the very bottom of settings.py)
 # Read more at https://dynaconf.readthedocs.io/en/latest/guides/django.html
+
+CELERY_BROKER_URL = 'redis://localhost:6379'  
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'  
+CELERY_ACCEPT_CONTENT = ['application/json']  
+CELERY_RESULT_SERIALIZER = 'json'  
+CELERY_TASK_SERIALIZER = 'json'  
+
 import dynaconf  # noqa
 settings = dynaconf.DjangoDynaconf(__name__)  # noqa
 # HERE ENDS DYNACONF EXTENSION LOAD (No more code below this line)

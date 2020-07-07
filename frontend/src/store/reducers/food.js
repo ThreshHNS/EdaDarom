@@ -82,6 +82,27 @@ const foodDeleteFail = (state, action) => {
   });
 };
 
+const foodUpdateSuccess = (state, action) => {
+  const updatedIndex = state.own.findIndex(
+    (item) => item.id === action.food.id
+  );
+  return updateObject(state, {
+    own: [
+      ...state.own.slice(0, updatedIndex),
+      action.food,
+      ...state.own.slice(updatedIndex + 1),
+    ],
+    loading: false,
+  });
+};
+
+const foodUpdateFail = (state, action) => {
+  return updateObject(state, {
+    loading: false,
+    error: action.error,
+  });
+};
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.FOOD_NEAREST_START:
@@ -106,6 +127,10 @@ const reducer = (state = initialState, action) => {
       return foodDeleteSuccess(state, action);
     case actionTypes.FOOD_DELETE_FAIL:
       return foodDeleteFail(state, action);
+    case actionTypes.FOOD_UPDATE_SUCCESS:
+      return foodUpdateSuccess(state, action);
+    case actionTypes.FOOD_UPDATE_FAIL:
+      return foodUpdateFail(state, action);
     default:
       return state;
   }

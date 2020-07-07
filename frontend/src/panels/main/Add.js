@@ -19,14 +19,7 @@ import * as actions from "../../store/actions/food";
 import Icon24AddOutline from "@vkontakte/icons/dist/24/add_outline";
 import Icon24Write from "@vkontakte/icons/dist/24/write";
 
-const Add = ({
-  id,
-  activePanel,
-  token,
-  isLoading,
-  setActiveStory,
-  foodCreate,
-}) => {
+const Add = ({ id, token, isLoading, setActiveStory, foodCreate }) => {
   const [popout, setPopout] = useState(null);
   const [image, setImage] = useState(null);
   const [food, setFood] = useState({
@@ -39,11 +32,11 @@ const Add = ({
   const [isSent, setIsSent] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && isSent) {
+    if (!isLoading && isValid && isSent) {
       setPopout(null);
       setActiveStory("home");
     }
-  }, [isLoading, isSent]);
+  }, [isLoading, isValid, isSent]);
 
   const onChange = (e) => {
     const { name, value } = e.currentTarget;
@@ -53,7 +46,7 @@ const Add = ({
   const submitFood = () => {
     const valid = !Object.values(food).some((x) => x === null);
     setIsValid(valid);
-    if (token && isValid) {
+    if (token && valid) {
       const data = new FormData();
       Object.keys(food).forEach((key) => data.append(key, food[key]));
       foodCreate(token, data);
@@ -89,7 +82,7 @@ const Add = ({
   };
 
   return (
-    <View id={id} activePanel={activePanel} popout={popout}>
+    <View id={id} activePanel={id} popout={popout}>
       <Panel id={id}>
         <PanelHeader>Создать</PanelHeader>
         {image && addImage()}
@@ -132,7 +125,7 @@ const Add = ({
           </Select>
 
           <Textarea
-            top="Не обязательно"
+            top="Необязательно"
             placeholder="Любимые пельмени моей бабушки. Отдаю нуждающимся."
             name="description"
             onChange={onChange}
@@ -148,8 +141,9 @@ const Add = ({
 
 Add.propTypes = {
   id: PropTypes.string.isRequired,
-  activePanel: PropTypes.string.isRequired,
   token: PropTypes.string,
+  isLoading: PropTypes.bool,
+  setActiveStory: PropTypes.func,
   foodCreate: PropTypes.func,
 };
 

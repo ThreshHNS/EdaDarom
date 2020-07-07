@@ -30,6 +30,12 @@ class VKUserSerializer(GeoFeatureModelSerializer):
         }
 
 
+class FoodAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['location_title', 'vk_id']
+
+
 class UserCreateSerializer(GeoFeatureModelSerializer):
     query_params = serializers.CharField()
 
@@ -61,8 +67,9 @@ class FoodSerializer(serializers.ModelSerializer):
         read_only_fields = ("user",)
         extra_kwargs = {"status": {"required": False}}
 
+
 class FoodNearestSerializer(serializers.ModelSerializer):
-    user = VKUserSerializer()
+    user = FoodAuthorSerializer()
     distance = serializers.SerializerMethodField()
 
     def get_distance(self, obj):
@@ -75,7 +82,7 @@ class FoodNearestSerializer(serializers.ModelSerializer):
 
 
 class FoodOwnSerializer(serializers.ModelSerializer):
-    user = VKUserSerializer()
+    user = FoodAuthorSerializer()
 
     class Meta:
         model = Food

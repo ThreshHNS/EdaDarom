@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('publication_date', models.DateTimeField(auto_now_add=True)),
                 ('duration', models.DurationField()),
-                ('image', models.ImageField(blank=True, upload_to=vkapp.utils.path_and_rename, verbose_name='Изображение')),
+                ('image', models.ImageField(blank=True, upload_to=vkapp.utils.path_and_rename_image, verbose_name='Изображение')),
                 ('title', models.TextField()),
                 ('description', models.TextField()),
                 ('status', models.SmallIntegerField(choices=[(0, 'Done'), (1, 'Active'), (2, 'Outdated'), (-1, 'Canceled')], default=0)),

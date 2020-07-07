@@ -11,7 +11,7 @@ from urllib.parse import urlparse, parse_qsl, urlencode
 from hashlib import md5
 
 
-def path_and_rename(instance, filename):
+def path_and_rename_image(instance, filename):
     """Переименовать файл в ImageField модели Food
     Изменить название и путь файла, если существует аналогичный
     с таким же названием.
@@ -21,13 +21,27 @@ def path_and_rename(instance, filename):
     Returns:
         os.path.join('image', filename)
     """
-    upload_to = "image"
     time = datetime.now().strftime("%d-%m-%y %H:%M:%S")
     ext = filename.split(".")[-1]
-    if instance.pk:
-        filename = f"user_{instance.user.pk}_{instance.pk}_{time}.{ext}"
-    else:
-        filename = f"{uuid4().hex}.{ext}"
+    upload_to = f"image/{instance.user.pk}"
+    filename = f'image_"{instance.uuid}"_{time}.{ext}'
+    return os.path.join(upload_to, filename)
+
+
+def path_and_rename_preview(instance, filename):
+    """Переименовать файл preview в ImageField модели Food
+    Изменить название и путь файла, если существует аналогичный
+    с таким же названием.
+    Args:
+        instance (Food Model): Instance of Food model
+        filename (string): Название файла (картинки) предосмотра
+    Returns:
+        os.path.join('image', filename)
+    """
+    time = datetime.now().strftime("%d-%m-%y %H:%M:%S")
+    ext = filename.split(".")[-1]
+    upload_to = f"image/{instance.user.pk}"
+    filename = f'preview_"{instance.uuid}"_{time}.{ext}'
     return os.path.join(upload_to, filename)
 
 

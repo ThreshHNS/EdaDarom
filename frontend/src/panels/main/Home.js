@@ -20,6 +20,7 @@ import * as actions from "../../store/actions/food";
 import { moment } from "../../utils";
 
 import Detail from "./Detail";
+import Edit from "./Edit";
 
 const Home = ({
   token,
@@ -31,8 +32,9 @@ const Home = ({
   setActiveStory,
 }) => {
   const [selectedFood, setSelectedFood] = useState(null);
-  const [feedPanel, setFeedPanel] = useState(activePanel);
+  const [homePanel, setHomePanel] = useState(activePanel);
   const [historyPanel, setHistoryPanel] = useState([activePanel]);
+  const [popout, setPopout] = useState(null);
 
   useEffect(() => {
     if (token && !ownFood.length) {
@@ -40,15 +42,32 @@ const Home = ({
     }
   }, [token, foodOwn]);
 
+  useEffect(() => {
+    if (selectedFood) {
+      const updatedFood = ownFood.find((item) => item.id === selectedFood.id);
+      setSelectedFood(updatedFood);
+    }
+  }, [ownFood]);
+
   const getDetails = (food) => {
     const history = [...historyPanel];
     history.push("detail");
-    if (feedPanel === activePanel) {
+    if (homePanel === activePanel) {
       bridge.send("VKWebAppEnableSwipeBack");
     }
     setSelectedFood(food);
     setHistoryPanel(history);
-    setFeedPanel("detail");
+    setHomePanel("detail");
+  };
+
+  const editFood = () => {
+    const history = [...historyPanel];
+    history.push("edit");
+    if (homePanel === activePanel) {
+      bridge.send("VKWebAppEnableSwipeBack");
+    }
+    setHistoryPanel(history);
+    setHomePanel("edit");
   };
 
   const goBack = () => {
@@ -59,7 +78,7 @@ const Home = ({
       bridge.send("VKWebAppDisableSwipeBack");
     }
     setHistoryPanel(history);
-    setFeedPanel(activePanel);
+    setHomePanel(currentPanel);
   };
 
   const onRefresh = () => {
@@ -71,8 +90,9 @@ const Home = ({
   return (
     <View
       id={id}
+      popout={popout}
       history={historyPanel}
-      activePanel={feedPanel}
+      activePanel={homePanel}
       onSwipeBack={goBack}
     >
       <Panel id={id}>
@@ -141,7 +161,20 @@ const Home = ({
         </PullToRefresh>
       </Panel>
 
-      <Detail id="detail" food={selectedFood} isOwn goBack={goBack} />
+      <Detail
+        id="detail"
+        food={selectedFood}
+        editFood={editFood}
+        isOwn
+        goBack={goBack}
+      />
+
+      <Edit
+        id="edit"
+        food={selectedFood}
+        setPopout={setPopout}
+        goBack={goBack}
+      />
     </View>
   );
 };

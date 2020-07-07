@@ -20,7 +20,16 @@ import { moment } from "../../utils";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
 import * as actions from "../../store/actions/food";
 
-const Detail = ({ id, token, food, isOwn, foodUpdate, foodDelete, goBack }) => {
+const Detail = ({
+  id,
+  token,
+  food,
+  isOwn,
+  editFood,
+  foodUpdate,
+  foodDelete,
+  goBack,
+}) => {
   const [isTaken, setIsTaken] = useState(false);
 
   const updateStatus = () => {
@@ -88,9 +97,9 @@ const Detail = ({ id, token, food, isOwn, foodUpdate, foodDelete, goBack }) => {
           {food.distance && (
             <Group>
               <Cell before={<Icon32Place />}>
-                <Text weight="medium">Наб.Обводного канала,17</Text>
+                <Text weight="medium">{food.user.location_title}</Text>
                 <Text weight="regular" className="Text__Secondary">
-                  {Math.floor(food.distance.toFixed(1) / 1000)}км от вас
+                  {(food.distance.toFixed(1) / 1000).toFixed(2)} км от вас
                 </Text>
               </Cell>
             </Group>
@@ -107,7 +116,7 @@ const Detail = ({ id, token, food, isOwn, foodUpdate, foodDelete, goBack }) => {
               <Div>
                 <Button
                   size="xl"
-                  href={`https://vk.com/im?sel=${food.user.properties.vk_id}`}
+                  href={`https://vk.com/im?sel=${food.user.vk_id}`}
                 >
                   Забрать
                 </Button>
@@ -120,7 +129,7 @@ const Detail = ({ id, token, food, isOwn, foodUpdate, foodDelete, goBack }) => {
                   </Button>
                 </Div>
                 <Div>
-                  <Button size="xl" mode="secondary">
+                  <Button size="xl" mode="secondary" onClick={editFood}>
                     Редактировать
                   </Button>
                 </Div>
@@ -145,8 +154,12 @@ const Detail = ({ id, token, food, isOwn, foodUpdate, foodDelete, goBack }) => {
 
 Detail.propTypes = {
   id: PropTypes.string.isRequired,
+  token: PropTypes.string,
   food: PropTypes.object,
   isOwn: PropTypes.bool,
+  editFood: PropTypes.func,
+  foodUpdate: PropTypes.func,
+  foodDelete: PropTypes.func,
   goBack: PropTypes.func.isRequired,
 };
 
