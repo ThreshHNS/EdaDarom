@@ -14,6 +14,9 @@ import {
   Text,
   Group,
   Tappable,
+  FixedLayout,
+  Div,
+  Link,
 } from "@vkontakte/vkui";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
 import * as actions from "../../store/actions/user";
@@ -104,7 +107,6 @@ const Settings = ({
               placeholder="Укажите радиус поиска еды"
               value={profileValue["notifications_radius"]}
               onChange={onChangeRadius}
-              disabled={!profileValue["notifications_status"]}
             >
               <option value="1">1 км</option>
               <option value="2">2 км</option>
@@ -124,6 +126,15 @@ const Settings = ({
             </Cell>
           </Tappable>
         </Group>
+
+        <FixedLayout vertical="bottom">
+          <Div className="Settings__Footer">
+            <Text>Наше сообщество:</Text>
+            <Link href="https://vk.com/eda_darom_app">Еда даром</Link>
+            <Text style={{ marginTop: 4, marginBottom: 4 }}>🍕</Text>
+            <Text>Версия 0.1.2</Text>
+          </Div>
+        </FixedLayout>
       </Panel>
 
       <Location id="location" onBackClick={onBackClick} />

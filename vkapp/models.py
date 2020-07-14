@@ -47,12 +47,12 @@ class Food(models.Model):
     DONE = "Done"
     ACTIVE = "Active"
     OUTDATED = "Outdated"
-    CANCELED = "Canceled"
+    RESERVED = "Reserved"
     STATUS_CHOICES = (
         (DONE, "Done"),
         (ACTIVE, "Active"),
         (OUTDATED, "Outdated"),
-        (CANCELED, "Canceled"),
+        (RESERVED, "Reserved"),
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey("VKUser", on_delete=models.CASCADE)

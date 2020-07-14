@@ -130,6 +130,14 @@
 .Search {
   overflow: visible;
 }
+
+.Settings__Footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: var(--text_secondary)
+}
 /* .Gallery__CustomBullets {
   position: absolute;
   bottom: 10px;

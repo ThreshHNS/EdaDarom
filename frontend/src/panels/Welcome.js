@@ -15,6 +15,7 @@ import {
   Gallery,
   Header,
   Text,
+  Link,
   ModalPageHeader,
   Spinner,
 } from "@vkontakte/vkui";
@@ -133,6 +134,13 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
         >
           Сохранить
         </Button>
+        <div className="ModalCard__caption" style={{ marginTop: 12 }}>
+          Нажимая на “Сохранить”, Вы принимаете{" "}
+          <Link href="https://vk.com/@eda_darom_app-publichnoe-soglashenie">
+            пользовательское соглашение
+          </Link>{" "}
+          данного приложения
+        </div>
       </ModalCard>
     </ModalRoot>
   );
