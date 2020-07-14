@@ -27,4 +27,3 @@ venv
 *.secrets.yaml
 
 *.env
-media/image
