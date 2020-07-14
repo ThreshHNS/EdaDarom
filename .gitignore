@@ -24,7 +24,7 @@ package-lock.json
 venv
 
 *.pyc
-.secrets.yaml
+*.secrets.yaml
 
 *.env
 media/image
