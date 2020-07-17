@@ -1,5 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "https://852948cf97ee.ngrok.io";
+// axios.defaults.baseURL = "https://edadaromapp.ru";
+axios.defaults.baseURL = "https://d7a76fcc3cce.ngrok.io";
 
 export default axios;

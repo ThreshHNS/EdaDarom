@@ -10,7 +10,11 @@ from .models import VKUser, Food
 
 @receiver(pre_save, sender=VKUser)
 def pre_save_handler(sender, instance, *args, **kwargs):
-    if not (instance.location_title or instance.is_superuser):
+    print(instance.location_coordinates)
+    print(instance.location_title)
+    print(instance.is_superuser)
+    if instance.location_coordinates and not (instance.location_title or instance.is_superuser):
+        print("YES")
         apikey = settings.YANDEX_SECRET_KEY
         location_coordinates = instance.location_coordinates
         coordinates = ",".join(str(x) for x in location_coordinates[::-1])

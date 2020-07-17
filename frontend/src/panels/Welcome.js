@@ -18,6 +18,7 @@ import {
   Link,
   ModalPageHeader,
   Spinner,
+  Placeholder,
 } from "@vkontakte/vkui";
 import bridge from "@vkontakte/vk-bridge";
 import * as actions from "../store/actions/user";
@@ -35,28 +36,10 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
     currentGeo: {},
     coordinates: null,
   });
+  const [geoAvailable, setGeoAvailable] = useState(true);
   const [geoModal, setGeoModal] = useState(null);
   const [mapVisible, setMapVisible] = useState(false);
   const [vkUser, setVkUser] = useState();
-
-  useEffect(() => {
-    if (vkUser && geoLocation && geoLocation.coordinates) {
-      const geo = {
-        type: "Point",
-        coordinates: geoLocation.currentGeo.center,
-      };
-      const user = {
-        vk_id: vkUser.id,
-        first_name: vkUser.first_name,
-        last_name: vkUser.last_name,
-        avatar_url: vkUser.photo_max_orig,
-        location_coordinates: geo,
-        query_params: queryParams,
-      };
-      userCreate(user);
-      localStorage.setItem("alreadyLaunched", true);
-    }
-  }, [vkUser, geoLocation, queryParams, userCreate]);
 
   useEffect(() => {
     if (galleryPage === 2) {
@@ -75,7 +58,6 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
     bridge
       .send("VKWebAppGetGeodata")
       .then((data) => {
-        console.log(data);
         // Обработка события в случае успеха
         if (data.available) {
           setGeoLocation({
@@ -88,6 +70,8 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
             },
             coordinates: [[data.lat, data.long]],
           });
+        } else {
+          setGeoAvailable(false);
         }
       })
       .catch((error) => {
@@ -97,6 +81,28 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
     setGeoModal("geo");
   };
 
+  const createUser = () => {
+    if (vkUser) {
+      const user = {
+        vk_id: vkUser.id,
+        first_name: vkUser.first_name,
+        last_name: vkUser.last_name,
+        avatar_url: vkUser.photo_max_orig,
+        query_params: queryParams,
+      };
+      if (geoLocation && geoLocation.coordinates) {
+        const geo = {
+          type: "Point",
+          coordinates: geoLocation.currentGeo.center,
+        };
+        user.location_coordinates = geo;
+      }
+      localStorage.setItem("alreadyLaunched", true);
+      userCreate(user);
+      setFirstLaunch(false);
+    }
+  };
+
   const modal = (
     <ModalRoot activeModal={geoModal}>
       <ModalCard
@@ -104,10 +110,16 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
         onClose={() => setGeoModal(null)}
         header={<ModalPageHeader>Ты на карте</ModalPageHeader>}
       >
-        {!mapVisible && (
+        {!mapVisible && geoAvailable && (
           <div className="Welcome__Spinner_loading">
             <Spinner size="large" />
           </div>
+        )}
+        {!geoAvailable && (
+          <Placeholder>
+            К сожалению, мы не смогли определить вашу геопозицию, но вы всегда
+            можете изменить ее в настройках.
+          </Placeholder>
         )}
         {geoLocation.coordinates && (
           <YMaps>
@@ -129,7 +141,7 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
         <Button
           size="l"
           stretched
-          onClick={() => setFirstLaunch(false)}
+          onClick={createUser}
           style={{ padding: "4px 0px" }}
         >
           Сохранить

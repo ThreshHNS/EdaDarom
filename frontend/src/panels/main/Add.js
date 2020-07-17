@@ -36,7 +36,7 @@ const Add = ({ id, token, isLoading, setActiveStory, foodCreate }) => {
       setPopout(null);
       setActiveStory("home");
     }
-  }, [isLoading, isValid, isSent]);
+  }, [isLoading, isValid, isSent, setActiveStory]);
 
   const onChange = (e) => {
     const { name, value } = e.currentTarget;
@@ -92,6 +92,7 @@ const Add = ({ id, token, isLoading, setActiveStory, foodCreate }) => {
             before={!image ? <Icon24AddOutline /> : <Icon24Write />}
             controlSize="xl"
             onChange={uploadImage}
+            accept="image/jpeg,image/png"
           >
             {!image ? "Добавить фото" : "Изменить фото"}
           </File>

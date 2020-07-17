@@ -6,10 +6,13 @@ from io import BytesIO
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models import PointField
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from .managers import VKUserManager
 from .utils import path_and_rename_image, path_and_rename_preview
+
+POINT_DEFAULT = Point(55.751244, 37.618423)
 
 
 class VKUser(AbstractUser):
@@ -20,10 +23,16 @@ class VKUser(AbstractUser):
     vk_id = models.IntegerField("VK ID", unique=True)
     first_name = models.CharField("Имя", max_length=16)
     last_name = models.CharField("Фамилия", max_length=16)
-    city = models.CharField("Город", max_length=28, null=True, blank=True)
-    country = models.CharField("Страна", max_length=42, null=True, blank=True)
+    city = models.CharField(
+        "Город", max_length=28, null=True, blank=True, default="Москва"
+    )
+    country = models.CharField(
+        "Страна", max_length=42, null=True, blank=True, default="Россия"
+    )
     avatar_url = models.TextField("Аватар", null=True, blank=True)
-    location_coordinates = PointField("Координаты", null=True, blank=True)
+    location_coordinates = PointField(
+        "Координаты", null=True, blank=True, default=POINT_DEFAULT
+    )
     location_title = models.TextField("Адрес", blank=True, null=True)
     notifications_radius = models.IntegerField("Радиус", default=1)  # km (1-10)
     notifications_status = models.BooleanField("Статус оповещения", default=True)
@@ -66,7 +75,9 @@ class Food(models.Model):
     )
     title = models.TextField("Заголовок")
     description = models.TextField("Описание", blank=True, null=True)
-    status = models.CharField("Статус", max_length=8, choices=STATUS_CHOICES, default=ACTIVE)
+    status = models.CharField(
+        "Статус", max_length=8, choices=STATUS_CHOICES, default=ACTIVE
+    )
 
     def compress_image(self, file, mode="resize"):
         imageTemproary = Image.open(file)
@@ -74,7 +85,7 @@ class Food(models.Model):
         if mode is "resize":
             width = imageTemproary.size[0]
             height = imageTemproary.size[1]
-            new_height = settings.FOOD_IMAGE_HEIGHT * 3 
+            new_height = settings.FOOD_IMAGE_HEIGHT * 3
             new_width = int(new_height * width / height)
             imageTemproaryResized = imageTemproary.resize(
                 (new_width, new_height), Image.ANTIALIAS

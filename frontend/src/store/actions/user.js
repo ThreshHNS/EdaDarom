@@ -44,6 +44,7 @@ export const userCreate = (user) => {
         dispatch(userPostSuccess(res.data));
       })
       .catch((err) => {
+        console.log(err.response);
         dispatch(userPostFail(err.message));
       });
   };

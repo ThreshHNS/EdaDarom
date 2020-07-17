@@ -23,6 +23,8 @@ const App = () => {
     bridge.send("VKWebAppInit");
 
     let alreadyLaucned = localStorage.getItem("alreadyLaunched");
+    console.log(alreadyLaucned);
+    console.log("yes");
     setQueryParams(window.location.search);
 
     if (!alreadyLaucned) {

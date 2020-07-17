@@ -14,7 +14,6 @@ import {
   Text,
   Group,
   Tappable,
-  FixedLayout,
   Div,
   Link,
 } from "@vkontakte/vkui";
@@ -58,7 +57,7 @@ const Settings = ({
     if (token && JSON.stringify(profileValue) !== JSON.stringify(userProfile)) {
       userUpdate(token, profileValue);
     }
-  }, [token, profileValue]);
+  }, [token, profileValue, userProfile, userUpdate]);
 
   const onChangeStatus = (e) => {
     const { name } = e.currentTarget;
@@ -116,7 +115,7 @@ const Settings = ({
             </Select>
           </FormLayout>
         </Group>
-        <Group>
+        <Group separator="hide">
           <Tappable onClick={() => setSettingsPanel("location")}>
             <Cell before={<Icon32Place />}>
               <Text weight="medium">{locationTitle}</Text>
@@ -127,14 +126,18 @@ const Settings = ({
           </Tappable>
         </Group>
 
-        <FixedLayout vertical="bottom">
+        <Group>
           <Div className="Settings__Footer">
             <Text>Наше сообщество:</Text>
             <Link href="https://vk.com/eda_darom_app">Еда даром</Link>
-            <Text style={{ marginTop: 4, marginBottom: 4 }}>🍕</Text>
+            <Text style={{ marginTop: 4, marginBottom: 4 }}>
+              <span role="img" aria-label="pizza">
+                🍕
+              </span>
+            </Text>
             <Text>Версия 0.1.2</Text>
           </Div>
-        </FixedLayout>
+        </Group>
       </Panel>
 
       <Location id="location" onBackClick={onBackClick} />

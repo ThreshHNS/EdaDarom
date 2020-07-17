@@ -9,20 +9,16 @@ import {
   FixedLayout,
 } from "@vkontakte/vkui";
 import { YMaps, Map, Placemark } from "react-yandex-maps";
-import bridge from "@vkontakte/vk-bridge";
 import { getGeoInfo } from "../../utils/";
 import * as actions from "../../store/actions/user";
 
 const YANDEX_API_KEY = process.env.REACT_APP_YANDEX_API_KEY;
 
-const Location = ({ id, token, userUpdate, onBackClick }) => {
+const Location = ({ id, token, locationCoords, userUpdate, onBackClick }) => {
   const [suggestValue, setSuggestValue] = useState("");
   const [suggestView, setSuggestView] = useState();
   const [yMaps, setYMaps] = useState();
   const [geoLocation, setGeoLocation] = useState({
-    lat: null,
-    long: null,
-    firstEntry: false,
     currentGeo: {},
     coordinates: null,
     title: null,
@@ -31,19 +27,16 @@ const Location = ({ id, token, userUpdate, onBackClick }) => {
   const mapRef = useRef();
 
   useEffect(() => {
-    bridge.send("VKWebAppGetGeodata").then((data) => {
+    if (locationCoords) {
       setGeoLocation({
-        lat: data.lat,
-        long: data.long,
-        firstEntry: false,
         currentGeo: {
-          center: [data.lat, data.long],
-          zoom: 15,
+          center: locationCoords,
+          zoom: 12,
         },
-        coordinates: [[data.lat, data.long]],
+        coordinates: [locationCoords],
       });
-    });
-  }, []);
+    }
+  }, [locationCoords]);
 
   useEffect(() => {
     if (suggestView) {
@@ -54,6 +47,7 @@ const Location = ({ id, token, userUpdate, onBackClick }) => {
         result.then((res) => {
           const firstGeoObject = res.geoObjects.get(0);
           const { coords, bounds, address, title } = getGeoInfo(firstGeoObject);
+          console.log("bounds", bounds);
           mapRef.current.setBounds(bounds);
           setGeoLocation({
             ...geoLocation,
@@ -70,7 +64,7 @@ const Location = ({ id, token, userUpdate, onBackClick }) => {
         suggestView.events.remove("select", addSuggestItem);
       };
     }
-  }, [suggestView, yMaps]);
+  }, [suggestView, yMaps, geoLocation]);
 
   useEffect(() => {
     if (token && geoLocation.coordinates && geoLocation.address) {
@@ -155,6 +149,7 @@ Location.propTypes = {
 
 const mapStateToProps = (state) => ({
   token: state.user.token,
+  locationCoords: state.user.locationCoords,
 });
 
 const mapDispatchToProps = (dispatch) => {

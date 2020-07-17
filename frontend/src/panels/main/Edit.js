@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
-  View,
   Panel,
   PanelHeader,
   PanelHeaderBack,
@@ -50,7 +49,7 @@ const Edit = ({
       setPopout(null);
       goBack();
     }
-  }, [isLoading, isSent]);
+  }, [isLoading, isValid, isSent, setPopout, goBack]);
 
   const onChange = (e) => {
     const { name, value } = e.currentTarget;

@@ -40,14 +40,14 @@ const Home = ({
     if (token && !ownFood.length) {
       foodOwn(token);
     }
-  }, [token, foodOwn]);
+  }, [token, ownFood.length, foodOwn]);
 
   useEffect(() => {
     if (selectedFood) {
       const updatedFood = ownFood.find((item) => item.id === selectedFood.id);
       setSelectedFood(updatedFood);
     }
-  }, [ownFood]);
+  }, [ownFood, selectedFood]);
 
   const getDetails = (food) => {
     const history = [...historyPanel];

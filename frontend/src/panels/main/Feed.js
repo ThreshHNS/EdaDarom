@@ -37,7 +37,7 @@ const Feed = ({
     if (token && !nearestFood.length) {
       foodNearest(token);
     }
-  }, [token, foodNearest]);
+  }, [token, nearestFood.length, foodNearest]);
 
   const getDetails = (food) => {
     const history = [...historyPanel];
