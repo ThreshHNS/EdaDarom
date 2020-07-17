@@ -1,3 +1,4 @@
+export const USER_POST_START = "USER:POST_START";
 export const USER_POST_SUCCESS = "USER:POST_SUCCESS";
 export const USER_POST_FAIL = "USER:POST_FAIL";
 

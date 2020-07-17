@@ -13,7 +13,13 @@ const initialState = {
   locationTitle: null,
   radius: null,
   notificationStatus: null,
-  loading: true,
+  loading: false,
+};
+
+const userPostStart = (state, action) => {
+  return updateObject(state, {
+    loading: true,
+  });
 };
 
 const userPostSuccess = (state, action) => {
@@ -69,6 +75,8 @@ const userUpdateSuccess = (state, action) => {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case actionTypes.USER_POST_START:
+      return userPostStart(state, action);
     case actionTypes.USER_POST_SUCCESS:
       return userPostSuccess(state, action);
     case actionTypes.USER_POST_FAIL:

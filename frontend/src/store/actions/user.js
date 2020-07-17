@@ -1,6 +1,12 @@
 import { axios } from "../../utils";
 import * as actionTypes from "./actionTypes";
 
+export const userPostStart = () => {
+  return {
+    type: actionTypes.USER_POST_START,
+  };
+};
+
 export const userPostSuccess = (user) => {
   return {
     type: actionTypes.USER_POST_SUCCESS,
@@ -22,29 +28,16 @@ export const userUpdateSuccess = (user) => {
     user: user,
   };
 };
-// export const userGetSuccess = (user) => {
-//   return {
-//     type: actionTypes.USER_GET_SUCCESS,
-//     user,
-//   };
-// };
-
-// export const userGetFail = (error) => {
-//   return {
-//     type: actionTypes.USER_GET_FAIL,
-//     error: error,
-//   };
-// };
 
 export const userCreate = (user) => {
   return (dispatch) => {
+    dispatch(userPostStart());
     axios
       .post("/auth/create/", user)
       .then((res) => {
         dispatch(userPostSuccess(res.data));
       })
       .catch((err) => {
-        console.log(err.response);
         dispatch(userPostFail(err.message));
       });
   };

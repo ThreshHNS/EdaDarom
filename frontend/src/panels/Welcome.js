@@ -19,6 +19,7 @@ import {
   ModalPageHeader,
   Spinner,
   Placeholder,
+  ScreenSpinner,
 } from "@vkontakte/vkui";
 import bridge from "@vkontakte/vk-bridge";
 import * as actions from "../store/actions/user";
@@ -27,7 +28,15 @@ import pizza from "../img/pizza.png";
 import person from "../img/person.png";
 import home from "../img/home.png";
 
-const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
+const Welcome = ({
+  isLoading,
+  setFirstLaunch,
+  scheme,
+  queryParams,
+  userCreate,
+}) => {
+  const [popout, setPopout] = useState(null);
+  const [isRegistered, setIsRegistered] = useState(false);
   const [galleryPage, setGalleryPage] = useState(0);
   const [geoLocation, setGeoLocation] = useState({
     lat: null,
@@ -40,6 +49,12 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
   const [geoModal, setGeoModal] = useState(null);
   const [mapVisible, setMapVisible] = useState(false);
   const [vkUser, setVkUser] = useState();
+
+  useEffect(() => {
+    if (!isLoading && isRegistered) {
+      setFirstLaunch(false);
+    }
+  }, [isLoading, isRegistered, setFirstLaunch]);
 
   useEffect(() => {
     if (galleryPage === 2) {
@@ -99,7 +114,8 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
       }
       localStorage.setItem("alreadyLaunched", true);
       userCreate(user);
-      setFirstLaunch(false);
+      setIsRegistered(true);
+      setPopout(<ScreenSpinner />);
     }
   };
 
@@ -235,7 +251,7 @@ const Welcome = ({ setFirstLaunch, scheme, queryParams, userCreate }) => {
     }
   };
   return (
-    <View activePanel="welcome" modal={modal}>
+    <View activePanel="welcome" modal={modal} popout={popout}>
       <Panel id="welcome">
         <PanelHeader>Еда даром</PanelHeader>
 
@@ -265,7 +281,12 @@ Welcome.propTypes = {
   setFirstLaunch: PropTypes.func.isRequired,
   queryParams: PropTypes.string,
   userCreate: PropTypes.func,
+  isLoading: PropTypes.bool,
 };
+
+const mapStateToProps = (state) => ({
+  isLoading: state.user.loading,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -273,4 +294,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Welcome);
+export default connect(mapStateToProps, mapDispatchToProps)(Welcome);

@@ -81,7 +81,7 @@ Main.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  isAuth: !!state.user.vkId,
+  isAuth: !!state.user.token,
 });
 
 const mapDispatchToProps = (dispatch) => {

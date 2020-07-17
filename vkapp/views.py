@@ -41,7 +41,13 @@ class UserCreateView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
+        return Response({
+            "user":
+            VKUserSerializer(user, context=self.get_serializer_context()).data,
+            "token":
+            AuthToken.objects.create(user)[1]
+        })
+
 
 
 # TODO: Change to genericapiview to Register
