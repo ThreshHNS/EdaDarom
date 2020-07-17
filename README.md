@@ -53,4 +53,4 @@
 - [X] Объявления возле тебя
 - [X] много другого..
 
-[@CreativeBoys](https://vk.com/app7515285 "@CreativeBoys")
+[@CreativeBoys](https://vk.com/eda_darom_app "@CreativeBoys")
