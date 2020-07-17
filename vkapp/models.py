@@ -80,23 +80,27 @@ class Food(models.Model):
     )
 
     def compress_image(self, file, mode="resize"):
-        imageTemproary = Image.open(file)
+        imageTemporary = Image.open(file)
+        if imageTemporary.mode != "RGB":
+            imageRgb = Image.new("RGB", imageTemporary.size, (255, 255, 255))
+            imageRgb.paste(imageTemporary, mask=imageTemporary.split()[3])
+            imageTemporary = imageRgb
         outputIoStream = BytesIO()
         if mode is "resize":
-            width = imageTemproary.size[0]
-            height = imageTemproary.size[1]
+            width = imageTemporary.size[0]
+            height = imageTemporary.size[1]
             new_height = settings.FOOD_IMAGE_HEIGHT * 3
             new_width = int(new_height * width / height)
-            imageTemproaryResized = imageTemproary.resize(
+            imageTemporaryResized = imageTemporary.resize(
                 (new_width, new_height), Image.ANTIALIAS
             )
         elif mode is "fit":
             width = settings.FOOD_IMAGE_WIDTH
             height = settings.FOOD_IMAGE_HEIGHT
-            imageTemproaryResized = ImageOps.fit(
-                imageTemproary, (width * 3, height * 3), Image.ANTIALIAS
+            imageTemporaryResized = ImageOps.fit(
+                imageTemporary, (width * 3, height * 3), Image.ANTIALIAS
             )
-        imageTemproaryResized.save(
+        imageTemporaryResized.save(
             outputIoStream, format="JPEG", optimize=True, quality=100
         )
         outputIoStream.seek(0)

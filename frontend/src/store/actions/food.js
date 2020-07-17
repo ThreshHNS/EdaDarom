@@ -135,7 +135,7 @@ export const foodCreate = (token, food) => {
         dispatch(foodPostSuccess(res.data));
       })
       .catch((err) => {
-        console.log(err.response.data);
+        console.log(err.response);
       });
   };
 };
