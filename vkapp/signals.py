@@ -4,17 +4,15 @@ from django_celery_beat.models import CrontabSchedule
 from django.db.models.signals import pre_save, post_delete
 from django.dispatch import receiver
 from django.conf import settings
+from django.contrib.auth import get_user_model
 import requests
-from .models import VKUser, Food
+from .models import Food
 
+User = get_user_model()
 
-@receiver(pre_save, sender=VKUser)
-def pre_save_handler(sender, instance, *args, **kwargs):
-    print(instance.location_coordinates)
-    print(instance.location_title)
-    print(instance.is_superuser)
+@receiver(pre_save, sender=User)
+def pre_save_user_handler(sender, instance, *args, **kwargs):
     if instance.location_coordinates and not (instance.location_title or instance.is_superuser):
-        print("YES")
         apikey = settings.YANDEX_SECRET_KEY
         location_coordinates = instance.location_coordinates
         coordinates = ",".join(str(x) for x in location_coordinates[::-1])
@@ -35,7 +33,7 @@ def pre_save_handler(sender, instance, *args, **kwargs):
 
 
 @receiver(pre_save, sender=Food)
-def pre_save_handler(sender, instance, update_fields, *args, **kwargs):
+def pre_save_food_handler(sender, instance, update_fields, *args, **kwargs):
     try:
         food = sender.objects.get(pk=instance.pk)
         if food.image != instance.image:
@@ -50,6 +48,6 @@ def pre_save_handler(sender, instance, update_fields, *args, **kwargs):
 
 
 @receiver(post_delete, sender=Food)
-def post_delete_handler(sender, instance, *args, **kwargs):
+def post_delete_food_handler(sender, instance, *args, **kwargs):
     instance.image.delete(False)
     instance.image_preview.delete(False)
