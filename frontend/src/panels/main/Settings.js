@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
@@ -14,23 +14,60 @@ import {
   Text,
   Group,
   Tappable,
+  Div,
+  Link,
 } from "@vkontakte/vkui";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
+import * as actions from "../../store/actions/user";
 
 import Location from "./Location";
 
 const Settings = ({
+  token,
   id,
   activePanel,
   firstName,
   lastName,
   avatar,
   city,
+  country,
   radius,
+  locationTitle,
   notificationStatus,
+  userUpdate,
 }) => {
+  const userProfile = {
+    notifications_radius: radius,
+    notifications_status: notificationStatus,
+  };
   const [settingsPanel, setSettingsPanel] = useState(activePanel);
-  const [isNotifications, setIsNotifications] = useState(notificationStatus);
+  const [profileValue, setProfileValue] = useState({
+    notifications_radius: radius,
+    notifications_status: notificationStatus,
+  });
+
+  useEffect(() => {
+    setProfileValue({
+      notifications_radius: radius,
+      notifications_status: notificationStatus,
+    });
+  }, [radius, notificationStatus]);
+
+  useEffect(() => {
+    if (token && JSON.stringify(profileValue) !== JSON.stringify(userProfile)) {
+      userUpdate(token, profileValue);
+    }
+  }, [token, profileValue, userProfile, userUpdate]);
+
+  const onChangeStatus = (e) => {
+    const { name } = e.currentTarget;
+    setProfileValue({ ...profileValue, [name]: !profileValue[name] });
+  };
+
+  const onChangeRadius = (e) => {
+    const { name, value } = e.currentTarget;
+    setProfileValue({ ...profileValue, [name]: parseInt(value) });
+  };
 
   const onBackClick = () => {
     setSettingsPanel(id);
@@ -43,7 +80,7 @@ const Settings = ({
         <RichCell
           disabled
           before={<Avatar size={72} src={avatar} />}
-          caption="Санкт-Петербург"
+          caption={country}
         >
           {firstName} {lastName}
         </RichCell>
@@ -52,8 +89,9 @@ const Settings = ({
             description="Получать уведомления о еде рядом."
             asideContent={
               <Switch
-                checked={isNotifications}
-                onChange={() => setIsNotifications(!isNotifications)}
+                name="notifications_status"
+                checked={profileValue["notifications_status"]}
+                onChange={onChangeStatus}
               />
             }
           >
@@ -63,10 +101,11 @@ const Settings = ({
         <Group>
           <FormLayout>
             <Select
-              disabled={!isNotifications}
+              name="notifications_radius"
               top="Радиус поиска"
               placeholder="Укажите радиус поиска еды"
-              value={radius}
+              value={profileValue["notifications_radius"]}
+              onChange={onChangeRadius}
             >
               <option value="1">1 км</option>
               <option value="2">2 км</option>
@@ -76,15 +115,28 @@ const Settings = ({
             </Select>
           </FormLayout>
         </Group>
-        <Group>
+        <Group separator="hide">
           <Tappable onClick={() => setSettingsPanel("location")}>
             <Cell before={<Icon32Place />}>
-              <Text weight="medium">Наб.Обводного канала,17</Text>
+              <Text weight="medium">{locationTitle}</Text>
               <Text weight="regular" className="Text__Secondary">
-                0.4км от вас
+                {city}
               </Text>
             </Cell>
           </Tappable>
+        </Group>
+
+        <Group>
+          <Div className="Settings__Footer">
+            <Text>Наше сообщество:</Text>
+            <Link href="https://vk.com/eda_darom_app">Еда даром</Link>
+            <Text style={{ marginTop: 4, marginBottom: 4 }}>
+              <span role="img" aria-label="pizza">
+                🍕
+              </span>
+            </Text>
+            <Text>Версия 0.1.2</Text>
+          </Div>
         </Group>
       </Panel>
 
@@ -96,15 +148,34 @@ const Settings = ({
 Settings.propTypes = {
   id: PropTypes.string.isRequired,
   activePanel: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  firstName: PropTypes.string,
+  lastName: PropTypes.string,
+  avatar: PropTypes.string,
+  city: PropTypes.string,
+  country: PropTypes.string,
+  radius: PropTypes.number,
+  locationTitle: PropTypes.string,
+  notificationStatus: PropTypes.bool,
+  userUpdate: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
+  token: state.user.token,
   firstName: state.user.firstName,
   lastName: state.user.lastName,
   city: state.user.city,
+  country: state.user.country,
   avatar: state.user.avatar,
+  locationTitle: state.user.locationTitle,
   radius: state.user.radius,
   notificationStatus: state.user.notificationStatus,
 });
 
-export default connect(mapStateToProps)(Settings);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    userUpdate: (token, user) => dispatch(actions.userUpdate(token, user)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);

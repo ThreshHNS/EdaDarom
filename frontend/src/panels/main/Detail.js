@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Button,
@@ -15,97 +16,163 @@ import {
   SimpleCell,
   InfoRow,
 } from "@vkontakte/vkui";
+import { moment } from "../../utils";
 import Icon32Place from "@vkontakte/icons/dist/32/place";
-import product1fSize from "../../img/product1_fullsize.png";
+import * as actions from "../../store/actions/food";
 
-const Detail = ({ id, productId, isOwn, onBackClick }) => {
+const Detail = ({
+  id,
+  token,
+  food,
+  isOwn,
+  editFood,
+  foodUpdate,
+  foodDelete,
+  goBack,
+}) => {
+  const [isTaken, setIsTaken] = useState(false);
+
+  const updateStatus = () => {
+    if (token && food) {
+      foodUpdate(token, food.id, { status: "Done" });
+      setIsTaken(true);
+    }
+  };
+
+  const deleteFood = () => {
+    if (token && food) {
+      foodDelete(token, food.id);
+      goBack();
+    }
+  };
+
   return (
     <Panel id={id}>
-      <PanelHeader left={<PanelHeaderBack onClick={() => onBackClick()} />}>
+      <PanelHeader left={<PanelHeaderBack onClick={() => goBack()} />}>
         Подробнее
       </PanelHeader>
-      <CardGrid>
-        <Card
-          size="l"
-          style={{
-            backgroundImage: `url(${product1fSize})`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center center",
-          }}
-        >
-          <div style={{ height: 183 }} />
-        </Card>
-      </CardGrid>
-      <Group>
-        <Title level="2" weight="semibold" style={{ marginLeft: 16 }}>
-          Фасоль в банке
-        </Title>
+      {food && (
+        <>
+          <CardGrid>
+            <Card size="l" style={{ marginTop: 14 }}>
+              <img
+                src={food.image}
+                style={{
+                  height: 193,
+                  width: "auto",
+                  display: "block",
+                  margin: "0 auto",
+                }}
+                alt="Product Preview"
+              />
+            </Card>
+          </CardGrid>
+          <Group>
+            <Title level="2" weight="semibold" style={{ marginLeft: 16 }}>
+              {food.title}
+            </Title>
 
-        <Cell
-          before={
-            <svg width="14" height="14" viewBox="0 0 14 14">
-              <circle cx="7" cy="7" r="7" fill="#B6F0B6" />
-              <circle cx="7" cy="7" r="4" fill="#4BB34B" />
-            </svg>
-          }
-        >
-          <Text
-            weight="regular"
-            className="Text__Secondary"
-            style={{ marginLeft: 8 }}
-          >
-            Активно еще 5 часов
-          </Text>
-        </Cell>
-      </Group>
-      <Group>
-        <Cell before={<Icon32Place />}>
-          <Text weight="medium">Наб.Обводного канала,17</Text>
-          <Text weight="regular" className="Text__Secondary">
-            0.4км от вас
-          </Text>
-        </Cell>
-      </Group>
-      <Group>
-        <SimpleCell multiline>
-          <InfoRow header="Описание">
-            Фасоль в банках, остался месяц до истечения срока годности.
-          </InfoRow>
-        </SimpleCell>
-      </Group>
-      <Group>
-        {!isOwn ? (
-          <Div>
-            <Button size="xl" href="https://vk.com/im?sel=53369046">
-              Забрать
-            </Button>
-          </Div>
-        ) : (
-          <>
-            <Div>
-              <Button size="xl">Забрали</Button>
-            </Div>
-            <Div>
-              <Button size="xl" mode="secondary">
-                Редактировать
-              </Button>
-            </Div>
-            <Div>
-              <Button size="xl" mode="secondary" className="Button__Remove">
-                Удалить
-              </Button>
-            </Div>
-          </>
-        )}
-      </Group>
+            <Cell
+              before={
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  style={{ marginTop: 6 }}
+                >
+                  <circle cx="7" cy="7" r="7" fill="#B6F0B6" />
+                  <circle cx="7" cy="7" r="4" fill="#4BB34B" />
+                </svg>
+              }
+            >
+              <Text
+                weight="regular"
+                className="Text__Secondary"
+                style={{ marginLeft: 8 }}
+              >
+                Активно еще {moment(food.end_date).fromNow(true)}
+              </Text>
+            </Cell>
+          </Group>
+          {food.distance && (
+            <Group>
+              <Cell before={<Icon32Place />}>
+                <Text weight="medium">{food.user.location_title}</Text>
+                <Text weight="regular" className="Text__Secondary">
+                  {(food.distance.toFixed(1) / 1000).toFixed(2)} км от вас
+                </Text>
+              </Cell>
+            </Group>
+          )}
+          <Group>
+            <SimpleCell multiline>
+              <InfoRow header="Описание">
+                {food.description ? food.description : "Отсутствует "}
+              </InfoRow>
+            </SimpleCell>
+          </Group>
+          <Group>
+            {!isOwn ? (
+              <Div>
+                <Button
+                  size="xl"
+                  href={`https://vk.com/im?sel=${food.user.vk_id}`}
+                >
+                  Забрать
+                </Button>
+              </Div>
+            ) : (
+              <>
+                <Div>
+                  <Button disabled={isTaken} size="xl" onClick={updateStatus}>
+                    Забрали
+                  </Button>
+                </Div>
+                <Div>
+                  <Button size="xl" mode="secondary" onClick={editFood}>
+                    Редактировать
+                  </Button>
+                </Div>
+                <Div>
+                  <Button
+                    size="xl"
+                    mode="secondary"
+                    className="Button__Remove"
+                    onClick={deleteFood}
+                  >
+                    Удалить
+                  </Button>
+                </Div>
+              </>
+            )}
+          </Group>
+        </>
+      )}
     </Panel>
   );
 };
 
 Detail.propTypes = {
   id: PropTypes.string.isRequired,
-  activePanel: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  food: PropTypes.object,
   isOwn: PropTypes.bool,
+  editFood: PropTypes.func,
+  foodUpdate: PropTypes.func,
+  foodDelete: PropTypes.func,
+  goBack: PropTypes.func.isRequired,
 };
 
-export default Detail;
+const mapStateToProps = (state) => ({
+  token: state.user.token,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    foodUpdate: (token, id, food) =>
+      dispatch(actions.foodUpdate(token, id, food)),
+    foodDelete: (token, id) => dispatch(actions.foodDelete(token, id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Detail);

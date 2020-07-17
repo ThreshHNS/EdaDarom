@@ -16,17 +16,21 @@
 
 - [Django](https://www.djangoproject.com/) - свободный фреймворк для веб-приложений на языке Python
 - [DRF](https://www.django-rest-framework.org/) -  библиотека, которая работает со стандартными моделями Django для создания гибкого и мощного API 
+- [Django Knox](https://github.com/aio-libs/aioredis) -  is an open source key-value store that functions as a data structure server.
 - [React](https://github.com/facebook/react) - JavaScript-библиотека для создания пользовательских интерфейсов
 - [Redux](https://redux.js.org/) - менеджер состояний, часто используемым с React.
 - [VKUI](https://vkcom.github.io/vkui-styleguide/) - это набор React-компонентов, с помощью которых можно создавать интерфейсы
 
 ## Installation
 <i>По вопросам: [@andreyvelts](https://t.me/andreyvelts "@andreyvelts")</i>
+- Install postgres and configure in
+- `backend/settings.py`
 - Open a command line window and go to the project's directory.
+- `sudo apt-get install build-essential libssl-dev libffi-dev python3-dev python-dev`
 - `pip install -r requirements.txt`
 - `python manage.py makemigrations`
 - `python manage.py migrate`
-- `python manage.py runserver`
+- `python manage.py runserver` or `python manage.py runserver 0.0.0.0:<your_port>`
 - Open another command line window.
 - `cd frontend && npm install`
 - `npm start`

@@ -15,8 +15,11 @@ import {
   Gallery,
   Header,
   Text,
+  Link,
   ModalPageHeader,
   Spinner,
+  Placeholder,
+  ScreenSpinner,
 } from "@vkontakte/vkui";
 import bridge from "@vkontakte/vk-bridge";
 import * as actions from "../store/actions/user";
@@ -25,7 +28,15 @@ import pizza from "../img/pizza.png";
 import person from "../img/person.png";
 import home from "../img/home.png";
 
-const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
+const Welcome = ({
+  isLoading,
+  setFirstLaunch,
+  scheme,
+  queryParams,
+  userCreate,
+}) => {
+  const [popout, setPopout] = useState(null);
+  const [isRegistered, setIsRegistered] = useState(false);
   const [galleryPage, setGalleryPage] = useState(0);
   const [geoLocation, setGeoLocation] = useState({
     lat: null,
@@ -34,27 +45,16 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
     currentGeo: {},
     coordinates: null,
   });
+  const [geoAvailable, setGeoAvailable] = useState(true);
   const [geoModal, setGeoModal] = useState(null);
   const [mapVisible, setMapVisible] = useState(false);
   const [vkUser, setVkUser] = useState();
 
   useEffect(() => {
-    if (vkUser && geoLocation && geoLocation.coordinates) {
-      const geo = {
-        type: "Point",
-        coordinates: geoLocation.currentGeo.center,
-      };
-      const user = {
-        vk_id: vkUser.id,
-        first_name: vkUser.first_name,
-        last_name: vkUser.last_name,
-        avatar_url: vkUser.photo_max_orig,
-        location_coordinates: geo,
-      };
-      userPost(user);
-      localStorage.setItem("alreadyLaunched", true);
+    if (!isLoading && isRegistered) {
+      setFirstLaunch(false);
     }
-  }, [vkUser, geoLocation]);
+  }, [isLoading, isRegistered, setFirstLaunch]);
 
   useEffect(() => {
     if (galleryPage === 2) {
@@ -66,11 +66,15 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
         .catch((error) => {
           console.log(error);
         });
+    }
+  }, [galleryPage]);
 
-      bridge
-        .send("VKWebAppGetGeodata")
-        .then((data) => {
-          // Обработка события в случае успеха
+  const openModal = () => {
+    bridge
+      .send("VKWebAppGetGeodata")
+      .then((data) => {
+        // Обработка события в случае успеха
+        if (data.available) {
           setGeoLocation({
             lat: data.lat,
             long: data.long,
@@ -81,12 +85,39 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
             },
             coordinates: [[data.lat, data.long]],
           });
-        })
-        .catch((error) => {
-          // Обработка события в случае ошибки
-        });
+        } else {
+          setGeoAvailable(false);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        // Обработка события в случае ошибки
+      });
+    setGeoModal("geo");
+  };
+
+  const createUser = () => {
+    if (vkUser) {
+      const user = {
+        vk_id: vkUser.id,
+        first_name: vkUser.first_name,
+        last_name: vkUser.last_name,
+        avatar_url: vkUser.photo_max_orig,
+        query_params: queryParams,
+      };
+      if (geoLocation && geoLocation.coordinates) {
+        const geo = {
+          type: "Point",
+          coordinates: geoLocation.currentGeo.center,
+        };
+        user.location_coordinates = geo;
+      }
+      localStorage.setItem("alreadyLaunched", true);
+      userCreate(user);
+      setIsRegistered(true);
+      setPopout(<ScreenSpinner />);
     }
-  }, [galleryPage]);
+  };
 
   const modal = (
     <ModalRoot activeModal={geoModal}>
@@ -95,29 +126,29 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
         onClose={() => setGeoModal(null)}
         header={<ModalPageHeader>Ты на карте</ModalPageHeader>}
       >
-        {!mapVisible && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              flexDirection: "column",
-              height: 240,
-            }}
-          >
+        {!mapVisible && geoAvailable && (
+          <div className="Welcome__Spinner_loading">
             <Spinner size="large" />
           </div>
+        )}
+        {!geoAvailable && (
+          <Placeholder>
+            К сожалению, мы не смогли определить вашу геопозицию, но вы всегда
+            можете изменить ее в настройках.
+          </Placeholder>
         )}
         {geoLocation.coordinates && (
           <YMaps>
             <div style={{ marginTop: 20, marginBottom: 12 }}>
               <Map
+                width="100%"
                 defaultState={geoLocation.currentGeo}
                 instanceRef={(ref) => {
                   ref && ref.behaviors.disable("drag") && setMapVisible(true);
                 }}
               >
                 {geoLocation.coordinates.map((coordinate) => (
-                  <Placemark geometry={coordinate} />
+                  <Placemark key={coordinate} geometry={coordinate} />
                 ))}
               </Map>
             </div>
@@ -126,52 +157,50 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
         <Button
           size="l"
           stretched
-          onClick={() => setActivePanel("main")}
+          onClick={createUser}
           style={{ padding: "4px 0px" }}
         >
           Сохранить
         </Button>
+        <div className="ModalCard__caption" style={{ marginTop: 12 }}>
+          Нажимая на “Сохранить”, Вы принимаете{" "}
+          <Link href="https://vk.com/@eda_darom_app-publichnoe-soglashenie">
+            пользовательское соглашение
+          </Link>{" "}
+          данного приложения
+        </div>
       </ModalCard>
     </ModalRoot>
   );
 
   const FirstSlide = () => (
-    <Panel id={id} centered>
+    <Panel id="welcome" centered>
       <div className="Welcome__Icon">
         <img src={pizza} alt="Pizza Icon" />
       </div>
-      <Text
-        weight="regular"
-        style={{ textAlign: "center", width: "75%", color: "#404040" }}
-      >
+      <Text weight="regular" className="Welcome__Text" style={{ width: "75%" }}>
         Ежегодно в мире выбрасывается около 884 млн тонн еды...
       </Text>
     </Panel>
   );
 
   const SecondSlide = () => (
-    <Panel id={id} centered>
+    <Panel id="welcome" centered>
       <div className="Welcome__Icon">
         <img src={person} alt="Soup Icon" />
       </div>
-      <Text
-        weight="regular"
-        style={{ textAlign: "center", width: "70%", color: "#404040" }}
-      >
+      <Text weight="regular" className="Welcome__Text" style={{ width: "70%" }}>
         Но зачем выбрасывать, если можно ее кому-нибудь отдать?
       </Text>
     </Panel>
   );
 
   const ThirdSlide = () => (
-    <Panel id={id} centered>
+    <Panel id="welcome" centered>
       <div className="Welcome__Icon">
         <img src={home} alt="Location Icon" />
       </div>
-      <Text
-        weight="regular"
-        style={{ textAlign: "center", width: "75%", color: "#404040" }}
-      >
+      <Text weight="regular" className="Welcome__Text" style={{ width: "75%" }}>
         Обменивайся лишней едой с теми, кто живет неподалеку.
       </Text>
     </Panel>
@@ -185,7 +214,6 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
             size="l"
             stretched
             className="Welcome__Button"
-            style={{ margin: "0px 20px", padding: "4px 0px" }}
             onClick={() => setGalleryPage(1)}
           >
             Это ужасно!
@@ -197,7 +225,6 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
             size="l"
             stretched
             className="Welcome__Button"
-            style={{ margin: "0px 20px", padding: "4px 0px" }}
             onClick={() => setGalleryPage(2)}
           >
             Действительно
@@ -210,8 +237,7 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
             stretched
             mode="commerce"
             className="Welcome__Button"
-            style={{ margin: "0px 20px", padding: "4px 0px" }}
-            onClick={() => setGeoModal("geo")}
+            onClick={openModal}
           >
             Определить локацию
           </Button>
@@ -225,15 +251,15 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
     }
   };
   return (
-    <View activePanel={activePanel} popout={popout} modal={modal}>
-      <Panel id={id}>
+    <View activePanel="welcome" modal={modal} popout={popout}>
+      <Panel id="welcome">
         <PanelHeader>Еда даром</PanelHeader>
 
         <Group header={<Header mode="secondary"></Header>}>
           <Gallery
             slideWidth="100%"
-            style={{ height: "100%", paddingBottom: 85, postion: "relative" }}
-            bullets="dark"
+            className="Welcome__Gallery"
+            bullets={scheme === "space_gray" ? "light" : "dark"}
             onChange={(number) => setGalleryPage(number)}
             slideIndex={galleryPage}
           >
@@ -242,6 +268,7 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
             <ThirdSlide />
           </Gallery>
         </Group>
+
         <Div style={{ display: "flex", marginTop: 15 }}>
           {renderButton(galleryPage)}
         </Div>
@@ -251,14 +278,20 @@ const Welcome = ({ id, activePanel, setActivePanel, popout, go, userPost }) => {
 };
 
 Welcome.propTypes = {
-  id: PropTypes.string.isRequired,
-  go: PropTypes.func.isRequired,
+  setFirstLaunch: PropTypes.func.isRequired,
+  queryParams: PropTypes.string,
+  userCreate: PropTypes.func,
+  isLoading: PropTypes.bool,
 };
+
+const mapStateToProps = (state) => ({
+  isLoading: state.user.loading,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    userPost: (user) => dispatch(actions.userPost(user)),
+    userCreate: (user) => dispatch(actions.userCreate(user)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(Welcome);
+export default connect(mapStateToProps, mapDispatchToProps)(Welcome);
