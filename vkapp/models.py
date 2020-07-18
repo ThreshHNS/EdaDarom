@@ -73,7 +73,7 @@ class Food(models.Model):
     image_preview = models.ImageField(
         "Предпросмотр", upload_to=path_and_rename_preview, blank=True, null=True
     )
-    title = models.TextField("Заголовок")
+    title = models.CharField("Заголовок", max_length=32)
     description = models.TextField("Описание", blank=True, null=True)
     status = models.CharField(
         "Статус", max_length=8, choices=STATUS_CHOICES, default=ACTIVE
